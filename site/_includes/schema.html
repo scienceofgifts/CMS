@@ -1,0 +1,500 @@
+{%- comment -%}
+Science of Gifts Centralized Schema.org JSON-LD Generator
+Generates valid, non-redundant, entity-separated structured data per page architecture.
+{%- endcomment -%}
+{% assign clean_url = page.url | replace:'index.html','' %}
+{% assign canonical_full = "https://scienceofgifts.com" | append: clean_url %}
+{% assign og_raw = page.heroImageType | default: page.image | default: page.slug %}
+{% if og_raw and og_raw != "" and og_raw != "default" %}
+  {% assign og_clean = og_raw | remove_first: "/assets/images/" | remove_first: "assets/images/" | remove_first: "/assets/" | remove_first: "assets/" | split: "." | first %}
+  {% assign schema_image = "https://scienceofgifts.com/assets/" | append: og_clean | append: ".webp" %}
+{% else %}
+  {% assign schema_image = "https://scienceofgifts.com/assets/home-hero.webp" %}
+{% endif %}
+
+{% assign schema_headline = page['search-title'] | default: page.title %}
+{% assign schema_description = page['seo-description'] | default: page.deck | default: page.description %}
+
+{% if page.layout == 'guide' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "{{ canonical_full }}#article",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://scienceofgifts.com/#website",
+        "name": "Science of Gifts",
+        "url": "https://scienceofgifts.com"
+      },
+      "headline": {{ schema_headline | jsonify }},
+      "description": {{ schema_description | jsonify }},
+      "image": "{{ schema_image }}",
+      {% assign last_mod = page.lastModifiedDate | default: page.updatedDate %}
+      {% if page.publishedDate %}"datePublished": {{ page.publishedDate | jsonify }},{% endif %}
+      {% if last_mod %}"dateModified": {{ last_mod | jsonify }},{% endif %}
+      "author": {
+        "@type": "Person",
+        "name": {{ page.author.name | default: "Editorial Team" | jsonify }}
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Science of Gifts",
+        "url": "https://scienceofgifts.com"
+      },
+      "mainEntityOfPage": "{{ canonical_full }}"
+    },
+    {
+      "@type": "ItemList",
+      "@id": "{{ canonical_full }}#itemlist",
+      "name": {{ page.title | append: "   Recommended Selections" | jsonify }},
+      "description": {{ page.deck | default: page.description | jsonify }},
+      "itemListElement": [
+        {% assign item_idx = 0 %}
+        {% if page.editorsPick %}
+          {% assign item_idx = item_idx | plus: 1 %}
+          {
+            "@type": "ListItem",
+            "position": {{ item_idx }},
+            "name": {{ page.editorsPick.title | jsonify }},
+            "url": "{{ canonical_full }}#{{ page.editorsPick.id }}"
+          }
+        {% endif %}
+        {% if page.quickPicks %}
+          {% for qp in page.quickPicks %}
+            {% assign item_idx = item_idx | plus: 1 %}
+            {% if item_idx > 1 %},{% endif %}
+            {
+              "@type": "ListItem",
+              "position": {{ item_idx }},
+              "name": {{ qp.title | jsonify }},
+              "url": "{{ canonical_full }}#{{ qp.id }}"
+            }
+          {% endfor %}
+        {% endif %}
+        {% assign guide_sections = page.budgetSections | default: page.categories %}
+        {% if guide_sections %}
+          {% for sec in guide_sections %}
+            {% for prod in sec.products %}
+              {% assign item_idx = item_idx | plus: 1 %}
+              {% if item_idx > 1 %},{% endif %}
+              {
+                "@type": "ListItem",
+                "position": {{ item_idx }},
+                "name": {{ prod.title | jsonify }},
+                "url": "{{ canonical_full }}#{{ prod.id }}"
+              }
+            {% endfor %}
+          {% endfor %}
+        {% endif %}
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_full }}#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://scienceofgifts.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Gift Guides",
+          "item": "https://scienceofgifts.com/gift-guides/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ page.title | jsonify }},
+          "item": "{{ canonical_full }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% elsif page.layout == 'article' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "{{ canonical_full }}#article",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://scienceofgifts.com/#website",
+        "name": "Science of Gifts",
+        "url": "https://scienceofgifts.com"
+      },
+      "headline": {{ schema_headline | jsonify }},
+      "description": {{ schema_description | jsonify }},
+      "image": "{{ schema_image }}",
+      {% assign last_mod = page.lastModifiedDate | default: page.updatedDate %}
+      {% if page.publishedDate %}"datePublished": {{ page.publishedDate | jsonify }},{% endif %}
+      {% if last_mod %}"dateModified": {{ last_mod | jsonify }},{% endif %}
+      "author": {
+        "@type": "Person",
+        "name": {{ page.author.name | default: "Clara Vance" | jsonify }}
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Science of Gifts",
+        "url": "https://scienceofgifts.com"
+      },
+      "mainEntityOfPage": "{{ canonical_full }}"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_full }}#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://scienceofgifts.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Articles",
+          "item": "https://scienceofgifts.com/articles/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ page.title | jsonify }},
+          "item": "{{ canonical_full }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% elsif clean_url == '/gift-guides/' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "{{ canonical_full }}#webpage",
+      "url": "{{ canonical_full }}",
+      "name": "All Gift Guides   Science of Gifts",
+      "description": "Comprehensive library of researched, field-tested gift guides organized by recipient obsession, craft domain, and material provenance."
+    },
+    {
+      "@type": "ItemList",
+      "@id": "{{ canonical_full }}#itemlist",
+      "name": "Gift Guides Archive",
+      "itemListElement": [
+        {% for guide in site.guides %}
+        {
+          "@type": "ListItem",
+          "position": {{ forloop.index }},
+          "name": {{ guide.title | jsonify }},
+          "url": "https://scienceofgifts.com{{ guide.url }}"
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_full }}#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://scienceofgifts.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Gift Guides",
+          "item": "{{ canonical_full }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% elsif clean_url == '/articles/' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "{{ canonical_full }}#webpage",
+      "url": "{{ canonical_full }}",
+      "name": "Articles & Essays   Science of Gifts",
+      "description": "In-depth essays and research on gift psychology, material culture, etiquette, and decision science."
+    },
+    {
+      "@type": "ItemList",
+      "@id": "{{ canonical_full }}#itemlist",
+      "name": "Articles & Essays Archive",
+      "itemListElement": [
+        {% for article in site.articles %}
+        {
+          "@type": "ListItem",
+          "position": {{ forloop.index }},
+          "name": {{ article.title | jsonify }},
+          "url": "https://scienceofgifts.com{{ article.url }}"
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_full }}#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://scienceofgifts.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Articles",
+          "item": "{{ canonical_full }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% elsif clean_url == '/for-men/' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "{{ canonical_full }}#webpage",
+      "url": "{{ canonical_full }}",
+      "name": "Gifts for Men   Curated Catalog | Science of Gifts",
+      "description": "Discover laboratory-tested, research-backed gift recommendations curated for men."
+    },
+    {
+      "@type": "ItemList",
+      "@id": "{{ canonical_full }}#itemlist",
+      "name": "Curated Gifts for Men",
+      "itemListElement": [
+        {% for prod in site.data.products limit:20 %}
+        {
+          "@type": "ListItem",
+          "position": {{ forloop.index }},
+          "name": {{ prod.title | jsonify }},
+          "url": "{{ canonical_full }}#{{ prod.id }}"
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_full }}#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://scienceofgifts.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "For Men",
+          "item": "{{ canonical_full }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% elsif clean_url == '/for-women/' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "{{ canonical_full }}#webpage",
+      "url": "{{ canonical_full }}",
+      "name": "Gifts for Women   Curated Catalog | Science of Gifts",
+      "description": "Discover laboratory-tested, research-backed gift recommendations curated for women."
+    },
+    {
+      "@type": "ItemList",
+      "@id": "{{ canonical_full }}#itemlist",
+      "name": "Curated Gifts for Women",
+      "itemListElement": [
+        {% for prod in site.data.products limit:20 %}
+        {
+          "@type": "ListItem",
+          "position": {{ forloop.index }},
+          "name": {{ prod.title | jsonify }},
+          "url": "{{ canonical_full }}#{{ prod.id }}"
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_full }}#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://scienceofgifts.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "For Women",
+          "item": "{{ canonical_full }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% elsif clean_url == '/gift-finder/' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://scienceofgifts.com/gift-finder/#webpage",
+      "url": "https://scienceofgifts.com/gift-finder/",
+      "name": "Gift Finder   Curated Recommendations | Science of Gifts",
+      "description": "An interactive editorial gift discovery questionnaire based on behavioral psychology, craft provenance, and recipient passions.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Science of Gifts"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://scienceofgifts.com/gift-finder/#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://scienceofgifts.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Gift Finder",
+          "item": "https://scienceofgifts.com/gift-finder/"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://scienceofgifts.com/gift-finder/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the Science of Gifts Gift Finder match recommendations?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Gift Finder uses an in-browser weighted scoring engine across our independently tested catalog. It cross-references recipient relationships, age ranges, strict price ceilings, passions, occasions, and desired gift personality without using external AI APIs or tracking personal data."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How are maximum budget limits enforced?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our engine strictly filters candidate products against your chosen price tier before ranking, so items priced higher than your ceiling are never presented."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the best gift strategy for someone who has everything?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For recipients who readily purchase their own everyday necessities, we recommend narrative objects: single-harvest culinary oils, laboratory-grade optical prisms, or bespoke desk ephemera crafted from solid brass."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are any product rankings or recommendations sponsored?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Science of Gifts maintains absolute editorial independence. We never accept paid product placements or sponsored rankings in exchange for positive reviews."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% elsif page.layout == 'page' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "{{ canonical_full }}#webpage",
+      "url": "{{ canonical_full }}",
+      "name": {{ schema_headline | jsonify }},
+      "description": {{ schema_description | default: site.description | jsonify }}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_full }}#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://scienceofgifts.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ page.title | jsonify }},
+          "item": "{{ canonical_full }}"
+        }
+      ]
+    }
+  ]
+}
+</script>
+{% else %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://scienceofgifts.com/#website",
+      "name": "Science of Gifts",
+      "url": "https://scienceofgifts.com",
+      "description": "An independent editorial gift publication featuring rigorously researched gift guides, thoughtful essays, and curated recommendations.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Science of Gifts",
+        "url": "https://scienceofgifts.com",
+        "logo": "https://scienceofgifts.com/assets/logo.png"
+      }
+    }
+  ]
+}
+</script>
+{% endif %}

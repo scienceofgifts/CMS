@@ -1,0 +1,172 @@
+---
+layout: default
+---
+<article class="pb-16">
+  <!-- 1. Breadcrumb Context -->
+  <div class="bg-[#EEF5FF]/80 border-b border-[#99BFF9]/20 py-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs text-[#5A6270]">
+      <nav class="flex items-center space-x-2">
+        <a href="/" class="hover:text-[#2A548E] transition-colors cursor-pointer">Home</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 text-[#5A6270]/40"><path d="m9 18 6-6-6-6"/></svg>
+        <a href="/articles/" class="hover:text-[#2A548E] transition-colors cursor-pointer">Articles</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 text-[#5A6270]/40"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="text-[#2A548E] font-medium">{{ page.category }}</span>
+      </nav>
+      <button onclick="navigator.clipboard?.writeText(window.location.href); const s = this.querySelector('span'); const orig = s.textContent; s.textContent = 'Copied!'; setTimeout(() => s.textContent = orig, 2000);" class="flex items-center gap-1.5 text-xs text-[#5A6270] hover:text-[#2A548E] transition-colors cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <span>Share Essay</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. Article Header -->
+  <header class="pt-12 pb-8 border-b border-[#99BFF9]/25">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center sm:text-left">
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-[#5A6270]">
+        <span class="text-[#154D3B] font-semibold uppercase tracking-wider">{{ page.category }}</span>
+        <span aria-hidden="true"> </span>
+        <span class="flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ page.readTime }}
+        </span>
+        {% assign last_mod = page.lastModifiedDate | default: page.updatedDate %}
+        {% assign pub_date = page.publishedDate %}
+        {% if last_mod and last_mod != "" %}
+        <span aria-hidden="true"> </span>
+        <span class="flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          {% if last_mod contains "Updated" %}{{ last_mod }}{% else %}Updated {{ last_mod }}{% endif %}
+        </span>
+        {% elsif pub_date and pub_date != "" %}
+        <span aria-hidden="true"> </span>
+        <span class="flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          {% if pub_date contains "Published" %}{{ pub_date }}{% else %}Published {{ pub_date }}{% endif %}
+        </span>
+        {% endif %}
+      </div>
+
+      <h1 class="font-serif-display text-3xl sm:text-4xl lg:text-5xl text-[#1E232B] font-normal leading-[1.18] text-balance">
+        {{ page.title }}
+      </h1>
+
+      <p class="text-base sm:text-lg text-[#5A6270] leading-relaxed">
+        {{ page.deck }}
+      </p>
+
+      <div class="pt-4 flex items-center justify-center sm:justify-start gap-3 text-xs text-[#5A6270] border-t border-[#99BFF9]/20">
+        <div class="w-9 h-9 rounded-full bg-[#154D3B] text-white flex items-center justify-center font-serif text-sm font-semibold">
+          {{ page.author.name | slice: 0, 1 }}
+        </div>
+        <div>
+          <div class="font-semibold text-[#1E232B]">{{ page.author.name }}</div>
+          <div class="text-[11px] text-[#5A6270]">{{ page.author.role }}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. Hero Visual -->
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-8 sm:my-12">
+    <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-sm aspect-[16/9] shadow-sm" role="img" aria-label="{{ page.heroImageAlt | escape }}">
+      {% assign a_img = page.heroImageType | default: page.image | default: page.slug %}
+      {% include editorial-image.html type=a_img alt=page.heroImageAlt loading="eager" %}
+    </div>
+    {% if page.heroImageCaption %}
+    <p class="mt-3 text-xs text-[#5A6270] italic text-center font-serif">
+      {{ page.heroImageCaption }}
+    </p>
+    {% endif %}
+  </div>
+
+  <!-- 4. Reading Column -->
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="space-y-8 text-base sm:text-[17px] text-[#1E232B] leading-[1.8]">
+      {% if page.introQuote %}
+      <div class="bg-[#EEF5FF] border-l-4 border-[#2A548E] p-6 my-6">
+        <blockquote class="font-serif-display text-lg sm:text-xl text-[#1B365D] italic leading-relaxed">
+          "{{ page.introQuote.quote }}"
+        </blockquote>
+        <div class="text-xs text-[#2A548E] font-medium text-right mt-2">
+            {{ page.introQuote.author }}{% if page.introQuote.source %}, {{ page.introQuote.source }}{% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="markdown-body space-y-6 text-base text-[#1E232B] leading-relaxed">
+        {{ content }}
+      </div>
+    </div>
+
+    <!-- Sources & References -->
+    {% if page.sources and page.sources.size > 0 %}
+    <section class="mt-16 pt-8 border-t border-[#99BFF9]/30 space-y-4">
+      <div class="text-xs uppercase tracking-widest text-[#2A548E] font-semibold flex items-center gap-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span>Primary Research &amp; Scholarly Citations</span>
+      </div>
+      <div class="space-y-3">
+        {% for src in page.sources %}
+        <div class="p-4 bg-white border border-[#99BFF9]/25 space-y-1.5 text-xs">
+          <div class="font-serif text-sm font-medium text-[#1E232B]">
+            {% if src.url %}
+            <a href="{{ src.url }}" target="_blank" rel="noopener noreferrer" class="hover:text-[#2A548E] hover:underline">
+              {{ src.title }}
+            </a>
+            {% else %}
+            {{ src.title }}
+            {% endif %}
+          </div>
+          <div class="text-[#5A6270]">
+            {{ src.author }}{% if src.publication %}   <em>{{ src.publication }}</em>{% endif %}{% if src.year %} ({{ src.year }}){% endif %}
+          </div>
+          {% if src.annotation %}
+          <p class="text-[#5A6270] italic pt-1 border-t border-stone-100">
+            {{ src.annotation }}
+          </p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Companion Gift Guide Callout -->
+    {% if page.relatedGuideSlug %}
+    <div class="my-12 p-6 bg-[#E8F8F1] border border-[#226E56]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="space-y-1">
+        <span class="text-xs uppercase tracking-wider text-[#226E56] font-semibold">
+          Companion Gift Guide
+        </span>
+        <h4 class="font-serif-display text-lg text-[#154D3B]">
+          Ready to put theory into practice? Explore our tested recommendations.
+        </h4>
+      </div>
+      <a href="/{{ page.relatedGuideSlug }}/" class="px-5 py-2.5 bg-[#226E56] hover:bg-[#154D3B] text-white text-xs font-semibold uppercase tracking-wider transition-colors shrink-0 flex items-center gap-1 cursor-pointer">
+        Explore {{ page.category }} Gifts
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- Author Bio -->
+    <div class="mt-12 pt-8 border-t border-[#99BFF9]/30 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+      <div class="w-14 h-14 rounded-full bg-[#154D3B] text-white flex items-center justify-center font-serif text-xl font-bold shrink-0">
+        {{ page.author.name | slice: 0, 1 }}
+      </div>
+      <div class="space-y-1 text-xs sm:text-sm">
+        <h4 class="font-serif-display text-lg text-[#1E232B]">
+          Written by {{ page.author.name }}
+        </h4>
+        <p class="text-[#5A6270] leading-relaxed">
+          {{ page.author.bio }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter -->
+  <div class="mt-20">
+    {% include newsletter.html %}
+  </div>
+</article>

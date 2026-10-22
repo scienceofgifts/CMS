@@ -1,0 +1,101 @@
+gift_guides:
+  - slug: all
+    title: All Guides
+  - slug: history
+    title: History
+  - slug: books
+    title: Books
+  - slug: curation
+    title: Curation
+  - slug: science
+    title: Science
+  - slug: food
+    title: Food & Craft
+  - slug: travel
+    title: Travel
+
+articles:
+  - slug: all
+    title: All Articles
+  - slug: etiquette
+    title: Etiquette
+  - slug: research
+    title: Research
+  - slug: relationships
+    title: Relationships
+  - slug: gift-giving
+    title: Gift Psychology
+
+men:
+  - slug: all
+    title: All Gifts
+  - slug: dad
+    title: For Dad
+    recipients:
+      - dad
+      - father
+      - parent
+  - slug: husband
+    title: For Husband
+    recipients:
+      - husband
+      - partner
+  - slug: boyfriend
+    title: For Boyfriend
+    recipients:
+      - boyfriend
+      - partner
+  - slug: brother
+    title: For Brother
+    recipients:
+      - brother
+      - sibling
+  - slug: son
+    title: For Son
+    recipients:
+      - son
+  - slug: him
+    title: For Him
+    recipients:
+      - him
+      - friend
+      - coworker
+      - teacher
+      - other
+
+women:
+  - slug: all
+    title: All Gifts
+  - slug: mom
+    title: For Mom
+    recipients:
+      - mom
+      - mother
+      - parent
+  - slug: wife
+    title: For Wife
+    recipients:
+      - wife
+      - partner
+  - slug: girlfriend
+    title: For Girlfriend
+    recipients:
+      - girlfriend
+      - partner
+  - slug: sister
+    title: For Sister
+    recipients:
+      - sister
+      - sibling
+  - slug: daughter
+    title: For Daughter
+    recipients:
+      - daughter
+  - slug: her
+    title: For Her
+    recipients:
+      - her
+      - friend
+      - coworker
+      - teacher
+      - other

@@ -1,0 +1,86 @@
+---
+layout: default
+title: "Product Collections & Curations — Science of Gifts"
+description: "Explore curated gift collections organized by recipient, archetype, and passion domain."
+canonical_url: "https://scienceofgifts.com/collections/"
+---
+<div id="collections-page-container" class="pb-16 space-y-12">
+  <!-- Header -->
+  <header class="pt-12 pb-10 border-b border-[#99BFF9]/30 bg-[#FAF9F6]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+      <div class="text-xs uppercase tracking-widest text-[#226E56] font-semibold">Curated Taxonomy</div>
+      <h1 class="font-serif-display text-4xl sm:text-5xl text-[#1E232B] font-normal leading-tight">
+        Curated Collections
+      </h1>
+      <p class="text-base text-[#5A6270] max-w-2xl leading-relaxed">
+        Browse research-backed product curations organized by recipient, material provenance, and curiosity archetype.
+      </p>
+    </div>
+  </header>
+
+  <!-- Collections Grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <!-- Featured Collections Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <a href="/for-men/" class="group cursor-pointer bg-white border border-[#99BFF9]/30 hover:border-[#99BFF9] p-8 transition-all space-y-4 block shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs uppercase tracking-widest text-[#226E56] font-semibold">Recipient Curation</span>
+          <span class="font-mono-code text-xs text-[#5A6270]">22 Objects</span>
+        </div>
+        <h2 class="font-serif-display text-3xl text-[#1E232B] group-hover:text-[#2A548E] transition-colors">
+          Gifts for Men
+        </h2>
+        <p class="text-sm text-[#5A6270] leading-relaxed">
+          Independently field-tested objects, archival instruments, and rare literature selected for durability, tactile utility, and narrative depth.
+        </p>
+        <div class="pt-4 flex items-center text-xs font-semibold text-[#2A548E] group-hover:translate-x-1 transition-transform gap-1">
+          <span>Explore Men's Collection</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        </div>
+      </a>
+
+      <a href="/for-women/" class="group cursor-pointer bg-white border border-[#99BFF9]/30 hover:border-[#99BFF9] p-8 transition-all space-y-4 block shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs uppercase tracking-widest text-[#226E56] font-semibold">Recipient Curation</span>
+          <span class="font-mono-code text-xs text-[#5A6270]">22 Objects</span>
+        </div>
+        <h2 class="font-serif-display text-3xl text-[#1E232B] group-hover:text-[#2A548E] transition-colors">
+          Gifts for Women
+        </h2>
+        <p class="text-sm text-[#5A6270] leading-relaxed">
+          Curated objects, tactile ephemera, epicurean delicacies, and enduring literature for discerning women.
+        </p>
+        <div class="pt-4 flex items-center text-xs font-semibold text-[#2A548E] group-hover:translate-x-1 transition-transform gap-1">
+          <span>Explore Women's Collection</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        </div>
+      </a>
+    </div>
+
+    <!-- Passions & Archetypes -->
+    <div class="space-y-6 pt-6 border-t border-[#99BFF9]/20">
+      <div class="space-y-1">
+        <span class="text-xs uppercase tracking-widest text-[#2A548E] font-semibold">Explore by Passion</span>
+        <h3 class="font-serif-display text-2xl text-[#1E232B]">Taxonomy of Passions</h3>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for cat in site.data.interests %}
+        <a href="{{ cat.url }}" class="group cursor-pointer p-6 bg-[#FAF9F6] border border-[#99BFF9]/25 hover:border-[#99BFF9] transition-all space-y-3 block">
+          <div class="flex items-center justify-between">
+            <h4 class="font-serif-display text-lg text-[#1E232B] group-hover:text-[#2A548E] transition-colors">{{ cat.name }}</h4>
+            <span class="font-mono-code text-xs text-[#5A6270]">{{ cat.count }} guides</span>
+          </div>
+          <p class="text-xs text-[#5A6270] leading-relaxed line-clamp-2">{{ cat.description }}</p>
+          <div class="pt-2 flex items-center text-xs text-[#2A548E] font-medium group-hover:translate-x-1 transition-transform gap-1">
+            <span>Explore guide</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter Section -->
+  {% include newsletter.html %}
+</div>

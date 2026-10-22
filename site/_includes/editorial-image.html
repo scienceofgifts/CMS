@@ -1,0 +1,105 @@
+{% assign raw_type = include.type | default: include.image | default: include.src | default: "default" %}
+{% assign is_thumb = false %}
+{% if include.thumb == true or include.thumb == "true" or include.is_thumb == true %}
+  {% assign is_thumb = true %}
+{% endif %}
+
+{%- comment -%}
+1. Handle full external URLs
+{%- endcomment -%}
+{% if raw_type contains "http://" or raw_type contains "https://" %}
+  <img
+    src="{{ raw_type }}"
+    alt="{{ include.alt | default: 'Science of Gifts Curated Item' | escape }}"
+    class="w-full h-full object-cover transition-opacity duration-300 {{ include.class }}"
+    loading="{{ include.loading | default: 'lazy' }}"
+    decoding="async"
+    {% if include.width %}width="{{ include.width }}"{% endif %}
+    {% if include.height %}height="{{ include.height }}"{% endif %}
+  >
+{% else %}
+  {%- comment -%}
+  2. Normalize directory path and detect file extension
+  {%- endcomment -%}
+  {% assign full_str = raw_type | strip %}
+  
+  {%- comment -%} Determine directory prefix (default: /assets/) {%- endcomment -%}
+  {% if full_str contains "/" %}
+    {% if full_str startswith "/" %}
+      {% assign path_parts = full_str | split: "/" %}
+    {% else %}
+      {% assign full_str = "/" | append: full_str %}
+      {% assign path_parts = full_str | split: "/" %}
+    {% endif %}
+    {% assign filename = path_parts | last %}
+    {% assign dir_parts_size = path_parts.size | minus: 1 %}
+    {% assign dir_path = "" %}
+    {% for i in (1..dir_parts_size) %}
+      {% assign idx = i | minus: 1 %}
+      {% if path_parts[idx] != "" %}
+        {% assign dir_path = dir_path | append: "/" | append: path_parts[idx] %}
+      {% endif %}
+    {% endfor %}
+    {% if dir_path == "" %}
+      {% assign dir_path = "/assets" %}
+    {% endif %}
+    {% assign dir_path = dir_path | append: "/" %}
+  {% else %}
+    {% assign dir_path = "/assets/" %}
+    {% assign filename = full_str %}
+  {% endif %}
+
+  {%- comment -%} Detect original extension {%- endcomment -%}
+  {% assign original_ext = ".jpg" %}
+  {% assign base_name = filename %}
+  {% if filename contains ".png" or filename contains ".PNG" %}
+    {% assign original_ext = ".png" %}
+    {% assign base_name = filename | remove: ".png" | remove: ".PNG" %}
+  {% elsif filename contains ".jpeg" or filename contains ".JPEG" %}
+    {% assign original_ext = ".jpeg" %}
+    {% assign base_name = filename | remove: ".jpeg" | remove: ".JPEG" %}
+  {% elsif filename contains ".jpg" or filename contains ".JPG" %}
+    {% assign original_ext = ".jpg" %}
+    {% assign base_name = filename | remove: ".jpg" | remove: ".JPG" %}
+  {% elsif filename contains ".webp" or filename contains ".WEBP" %}
+    {% assign original_ext = ".webp" %}
+    {% assign base_name = filename | remove: ".webp" | remove: ".WEBP" %}
+  {% elsif filename contains ".svg" or filename contains ".SVG" %}
+    {% assign original_ext = ".svg" %}
+    {% assign base_name = filename | remove: ".svg" | remove: ".SVG" %}
+  {% endif %}
+
+  {%- comment -%}
+  3. Calculate preferred WebP path and fallback path
+  {%- endcomment -%}
+  {% if is_thumb %}
+    {% if base_name contains "-thumb" %}
+      {% assign webp_path = dir_path | append: base_name | append: ".webp" %}
+    {% else %}
+      {% assign webp_path = dir_path | append: base_name | append: "-thumb.webp" %}
+    {% endif %}
+  {% else %}
+    {% assign webp_path = dir_path | append: base_name | append: ".webp" %}
+  {% endif %}
+
+  {%- comment -%} Fallback path preserves original extension and source path {%- endcomment -%}
+  {% if include.fallback %}
+    {% assign fallback_path = include.fallback %}
+  {% elsif original_ext == ".webp" %}
+    {% assign fallback_path = dir_path | append: base_name | append: ".jpg" %}
+  {% else %}
+    {% assign fallback_path = dir_path | append: base_name | append: original_ext %}
+  {% endif %}
+
+  <img
+    src="{{ webp_path }}"
+    data-fallback="{{ fallback_path }}"
+    alt="{{ include.alt | default: 'Science of Gifts Curated Item' | escape }}"
+    class="w-full h-full object-cover transition-opacity duration-300 {{ include.class }}"
+    loading="{{ include.loading | default: 'lazy' }}"
+    decoding="async"
+    {% if include.width %}width="{{ include.width }}"{% endif %}
+    {% if include.height %}height="{{ include.height }}"{% endif %}
+    onerror="this.onerror=null; this.src=this.dataset.fallback;"
+  >
+{% endif %}

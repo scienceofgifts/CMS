@@ -1,0 +1,6 @@
+{
+  "name": "Science of Gifts - Local Content Editor",
+  "description": "Private local content editor and CMS foundation for the Science of Gifts Jekyll publication.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

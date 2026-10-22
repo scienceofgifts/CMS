@@ -1,0 +1,38 @@
+---
+layout: default
+---
+<article class="pb-16 space-y-12">
+  <div class="bg-[#EEF5FF]/80 border-b border-[#99BFF9]/20 py-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs text-[#5A6270]">
+      <nav class="flex items-center space-x-2">
+        <a href="/" class="hover:text-[#2A548E] transition-colors">Home</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 text-[#5A6270]/40"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="text-[#2A548E] font-medium">{{ page.title }}</span>
+      </nav>
+    </div>
+  </div>
+  <header class="pt-8 pb-8 border-b border-[#99BFF9]/25">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 text-center sm:text-left">
+      {% if page.eyebrow %}
+      <div class="text-xs uppercase tracking-widest text-[#226E56] font-semibold">{{ page.eyebrow }}</div>
+      {% endif %}
+      <h1 class="font-serif-display text-3xl sm:text-4xl lg:text-5xl text-[#1E232B] font-normal leading-[1.18] text-balance">
+        {{ page.title }}
+      </h1>
+      {% if page.description %}
+      <p class="text-base sm:text-lg text-[#5A6270] leading-relaxed">
+        {{ page.description }}
+      </p>
+      {% endif %}
+      {% if page.updatedDate %}
+      <div class="text-xs text-[#5A6270]">Last updated: {{ page.updatedDate }}</div>
+      {% endif %}
+    </div>
+  </header>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-base text-[#1E232B] leading-relaxed">
+    <div class="markdown-body space-y-6">
+      {{ content }}
+    </div>
+  </div>
+  {% include newsletter.html %}
+</article>

@@ -1,0 +1,375 @@
+---
+layout: default
+---
+{% assign all_products = site.data.products %}
+{% if page.editorsPick %}
+  {% assign ep = page.editorsPick %}
+{% elsif page.editors_pick_id %}
+  {% assign ep = all_products | where: "id", page.editors_pick_id | first %}
+{% endif %}
+<article class="pb-16">
+  <!-- 1. Breadcrumb Context -->
+  <div class="bg-[#EEF5FF]/80 border-b border-[#99BFF9]/20 py-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs text-[#5A6270]">
+      <nav class="flex items-center space-x-2">
+        <a href="/" class="hover:text-[#2A548E] transition-colors cursor-pointer">Home</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 text-[#5A6270]/40"><path d="m9 18 6-6-6-6"/></svg>
+        <a href="/gift-guides/" class="hover:text-[#2A548E] transition-colors cursor-pointer">Gift Guides</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 text-[#5A6270]/40"><path d="m9 18 6-6-6-6"/></svg>
+        <span class="text-[#2A548E] font-medium">{{ page.category }}</span>
+      </nav>
+      <button onclick="navigator.clipboard?.writeText(window.location.href); const s = this.querySelector('span'); const orig = s.textContent; s.textContent = 'Copied!'; setTimeout(() => s.textContent = orig, 2000);" class="flex items-center gap-1.5 text-xs text-[#5A6270] hover:text-[#2A548E] transition-colors cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <span>Share Guide</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. Header & Title Deck -->
+  <header class="pt-10 pb-8 border-b border-[#99BFF9]/25">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center sm:text-left">
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-[#5A6270]">
+        <span class="text-[#226E56] font-semibold uppercase tracking-wider">{{ page.category }} Guide</span>
+        <span aria-hidden="true"> </span>
+        <span class="flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ page.readTime }}
+        </span>
+        {% assign last_mod = page.lastModifiedDate | default: page.updatedDate %}
+        {% assign pub_date = page.publishedDate %}
+        {% if last_mod and last_mod != "" %}
+        <span aria-hidden="true"> </span>
+        <span class="flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          {% if last_mod contains "Updated" %}{{ last_mod }}{% else %}Updated {{ last_mod }}{% endif %}
+        </span>
+        {% elsif pub_date and pub_date != "" %}
+        <span aria-hidden="true"> </span>
+        <span class="flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          {% if pub_date contains "Published" %}{{ pub_date }}{% else %}Published {{ pub_date }}{% endif %}
+        </span>
+        {% endif %}
+      </div>
+
+      <h1 class="font-serif-display text-3xl sm:text-4xl lg:text-5xl text-[#1E232B] font-normal leading-[1.15] text-balance">
+        {{ page.title }}
+      </h1>
+
+      <p class="text-base sm:text-lg text-[#5A6270] leading-relaxed max-w-3xl">
+        {{ page.deck }}
+      </p>
+
+      <div class="pt-4 flex items-center justify-center sm:justify-start gap-3 text-xs text-[#5A6270] border-t border-[#99BFF9]/20">
+        <div class="w-8 h-8 rounded-full bg-[#2A548E] text-white flex items-center justify-center font-serif text-sm font-semibold">
+          {{ page.author.name | slice: 0, 1 }}
+        </div>
+        <div>
+          <div class="font-semibold text-[#1E232B]">{{ page.author.name }}</div>
+          <div class="text-[11px] text-[#5A6270]">{{ page.author.role }}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. Hero Visual & Curatorial Caption -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 my-8 sm:my-12">
+    <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-sm aspect-[16/9] shadow-sm" role="img" aria-label="{{ page.heroImageAlt | escape }}">
+      {% assign g_img = page.heroImageType | default: page.image | default: page.slug %}
+      {% include editorial-image.html type=g_img alt=page.heroImageAlt loading="eager" %}
+    </div>
+    {% if page.heroImageCaption %}
+    <p class="mt-3 text-xs text-[#5A6270] italic text-center font-serif">
+      {{ page.heroImageCaption }}
+    </p>
+    {% endif %}
+  </div>
+
+  <!-- 4. Main Two-Column Layout -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <!-- Sticky Sidebar Navigation -->
+      <aside class="hidden lg:block lg:col-span-3 sticky top-28 bg-[#FAF9F6] border border-[#99BFF9]/30 p-5 space-y-4">
+        <div class="text-xs uppercase tracking-widest text-[#2A548E] font-semibold border-b border-[#99BFF9]/20 pb-2">
+          Guide Contents
+        </div>
+        <nav class="space-y-1 text-xs">
+          <a href="#introduction" class="toc-link block w-full text-left py-1.5 px-2 transition-colors rounded cursor-pointer bg-[#EEF5FF] text-[#2A548E] font-semibold border-l-2 border-[#2A548E] active-toc" data-section="introduction">
+            Introduction
+          </a>
+          {% if ep %}
+          <a href="#editors-pick" class="toc-link block w-full text-left py-1.5 px-2 transition-colors rounded cursor-pointer text-[#5A6270] hover:text-[#1E232B] hover:bg-[#EEF5FF]" data-section="editors-pick">
+            Editor s Pick
+          </a>
+          {% endif %}
+          {% if page.quickPicks and page.quickPicks.size > 0 %}
+          <a href="#quick-picks" class="toc-link block w-full text-left py-1.5 px-2 transition-colors rounded cursor-pointer text-[#5A6270] hover:text-[#1E232B] hover:bg-[#EEF5FF]" data-section="quick-picks">
+            Quick Picks
+          </a>
+          {% endif %}
+          {% assign guide_sections = page.budgetSections | default: page.categories %}
+          {% if guide_sections and guide_sections.size > 0 %}
+            {% for sec in guide_sections %}
+            <a href="#budget-section-{{ forloop.index0 }}" class="toc-link block w-full text-left py-1.5 px-2 transition-colors rounded cursor-pointer text-[#5A6270] hover:text-[#1E232B] hover:bg-[#EEF5FF]" data-section="budget-section-{{ forloop.index0 }}">
+              {{ sec.title | split: '   ' | first }}
+            </a>
+            {% endfor %}
+          {% endif %}
+          {% if page.howToPick %}
+          <a href="#how-to-pick" class="toc-link block w-full text-left py-1.5 px-2 transition-colors rounded cursor-pointer text-[#5A6270] hover:text-[#1E232B] hover:bg-[#EEF5FF]" data-section="how-to-pick">
+            How to Pick
+          </a>
+          {% endif %}
+          {% if page.whatToAvoid %}
+          <a href="#what-to-avoid" class="toc-link block w-full text-left py-1.5 px-2 transition-colors rounded cursor-pointer text-[#5A6270] hover:text-[#1E232B] hover:bg-[#EEF5FF]" data-section="what-to-avoid">
+            What to Avoid
+          </a>
+          {% endif %}
+          {% if page.relatedGuideSlugs and page.relatedGuideSlugs.size > 0 %}
+          <a href="#related-guides" class="toc-link block w-full text-left py-1.5 px-2 transition-colors rounded cursor-pointer text-[#5A6270] hover:text-[#1E232B] hover:bg-[#EEF5FF]" data-section="related-guides">
+            Related Guides
+          </a>
+          {% endif %}
+        </nav>
+        <div class="pt-3 border-t border-[#99BFF9]/20 text-[11px] text-[#5A6270] space-y-2">
+          <div class="flex items-center gap-1 text-[#226E56]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 text-[#226E56]"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
+            <span class="font-semibold">Independent Testing</span>
+          </div>
+          <p class="leading-snug">
+            Every item evaluated for weight, craftsmanship, and narrative depth.
+          </p>
+        </div>
+      </aside>
+
+      <!-- Main Column -->
+      <main class="lg:col-span-9 space-y-16 max-w-3xl">
+        <!-- Introductory Quote -->
+        {% if page.introQuote %}
+        <div class="bg-[#E8F8F1] border-l-4 border-[#226E56] p-6 space-y-2">
+          <blockquote class="font-serif-display text-lg text-[#154D3B] italic leading-relaxed">
+            "{{ page.introQuote.quote }}"
+          </blockquote>
+          <div class="text-xs text-[#226E56] font-medium text-right">
+              {{ page.introQuote.author }}{% if page.introQuote.source %}, <span class="font-normal text-[#154D3B]/80">{{ page.introQuote.source }}</span>{% endif %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Affiliate Disclosure -->
+        <div class="flex items-center gap-2 p-3 bg-[#FAF9F6] border border-[#99BFF9]/30 text-xs text-[#5A6270]">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-[#2A548E] shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>
+            <strong>Affiliate Disclosure:</strong> Science of Gifts is reader-supported. When you buy through our links, we may earn an affiliate commission at no extra cost to you.
+          </span>
+        </div>
+
+        <!-- Introduction Section -->
+        <section id="introduction" class="space-y-4 text-base text-[#1E232B] leading-relaxed">
+          <h2 class="font-serif-display text-2xl sm:text-3xl text-[#1E232B] font-normal border-b border-[#99BFF9]/25 pb-2">
+            The Anatomy of a Great {{ page.category }} Gift
+          </h2>
+          <div class="markdown-body space-y-4">
+            {{ content }}
+          </div>
+        </section>
+
+        <!-- Editor's Pick -->
+        {% if ep %}
+        {% include editors-pick.html product=ep %}
+        {% endif %}
+
+        <!-- Quick Picks -->
+        {% if page.quickPicks and page.quickPicks.size > 0 %}
+        <section id="quick-picks" class="scroll-mt-24 space-y-6">
+          <div class="border-b border-[#99BFF9]/30 pb-2">
+            <span class="text-xs uppercase tracking-widest text-[#226E56] font-semibold">Immediate Solutions</span>
+            <h2 class="font-serif-display text-2xl sm:text-3xl text-[#1E232B] font-normal">Quick Recommendations</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for qp in page.quickPicks %}
+            <div class="bg-white border border-[#99BFF9]/30 p-5 flex flex-col justify-between space-y-4 shadow-2xs">
+              <div class="space-y-3">
+                <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/25 aspect-[16/9]" role="img" aria-label="{{ qp.title }}">
+                  {% assign qp_img = qp.image | default: qp.imageType | default: qp.id %}
+                  {% include editorial-image.html type=qp_img alt=qp.title thumb=true %}
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-mono-code font-bold text-[#154D3B]">{{ qp.price }}</span>
+                    <span class="text-[#5A6270] truncate max-w-[120px]">{{ qp.vendor }}</span>
+                  </div>
+                  <h4 class="font-serif-display text-base text-[#1E232B] font-medium leading-snug">{{ qp.title }}</h4>
+                  <p class="text-xs text-[#5A6270] line-clamp-2">{{ qp.tagline }}</p>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-[#99BFF9]/20 flex items-center justify-between gap-2">
+                {% assign qp_v = qp.vendor | default: qp.merchant | downcase %}
+                {% assign qp_u = qp.vendorUrl | default: qp.product_url | downcase %}
+                {% assign is_qp_own = false %}
+                {% if qp_v contains "scienceofgifts" or qp_v contains "science of gifts" or qp_u contains "scienceofgifts.com" %}
+                  {% assign is_qp_own = true %}
+                {% endif %}
+                <a href="{{ qp.vendorUrl }}"{% unless is_qp_own %} rel="noopener noreferrer sponsored"{% endunless %} class="text-xs font-semibold text-[#2A548E] hover:underline flex items-center gap-1">
+                  View on {{ qp.vendor | split: ',' | first }}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+                </a>
+                <button data-id="{{ qp.id }}" class="toggle-product-bookmark p-1.5 text-[#5A6270] hover:text-[#2A548E] rounded transition-colors cursor-pointer" title="Save to shortlist">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>
+                </button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
+
+        <!-- Tested Recommendations by Budget/Category Section -->
+        {% assign guide_sections = page.budgetSections | default: page.categories %}
+        {% if guide_sections and guide_sections.size > 0 %}
+          {% for sec in guide_sections %}
+          <section id="budget-section-{{ forloop.index0 }}" class="scroll-mt-24 space-y-8">
+            <div class="border-b border-[#99BFF9]/30 pb-2">
+              <h2 class="font-serif-display text-2xl sm:text-3xl text-[#1E232B] font-normal">{{ sec.title }}</h2>
+              {% if sec.description %}
+              <p class="text-xs sm:text-sm text-[#5A6270] mt-1">{{ sec.description }}</p>
+              {% endif %}
+            </div>
+            <div class="space-y-10">
+              {% for prod in sec.products %}
+              {% include product-card.html product=prod %}
+              {% endfor %}
+            </div>
+          </section>
+          {% endfor %}
+        {% endif %}
+
+        <!-- How to Pick Rulebook -->
+        {% if page.howToPick %}
+        <section id="how-to-pick" class="scroll-mt-24 space-y-6">
+          <div class="border-b border-[#99BFF9]/30 pb-2">
+            <span class="text-xs uppercase tracking-widest text-[#226E56] font-semibold">Curatorial Principles</span>
+            <h2 class="font-serif-display text-2xl sm:text-3xl text-[#1E232B] font-normal">{{ page.howToPick.title }}</h2>
+          </div>
+          {% if page.howToPick.content %}
+          <p class="text-sm text-[#1E232B] leading-relaxed">{{ page.howToPick.content }}</p>
+          {% endif %}
+          {% if page.howToPick.rules and page.howToPick.rules.size > 0 %}
+          <div class="grid grid-cols-1 gap-4 pt-2">
+            {% for r in page.howToPick.rules %}
+            <div class="p-4 bg-white border border-[#99BFF9]/25 space-y-1">
+              <h4 class="font-serif-display text-sm font-semibold text-[#1E232B]">{{ r.title }}</h4>
+              <p class="text-xs text-[#5A6270] leading-relaxed">{{ r.explanation }}</p>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- What to Avoid Section -->
+        {% if page.whatToAvoid %}
+        <section id="what-to-avoid" class="scroll-mt-24 space-y-6">
+          <div class="border-b border-[#99BFF9]/30 pb-2">
+            <span class="text-xs uppercase tracking-widest text-rose-700 font-semibold flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>The Pitfalls</span>
+            </span>
+            <h2 class="font-serif-display text-2xl sm:text-3xl text-[#1E232B] font-normal">What to Avoid</h2>
+          </div>
+          {% if page.whatToAvoid.summary %}
+          <p class="text-sm text-[#1E232B] leading-relaxed">{{ page.whatToAvoid.summary }}</p>
+          {% endif %}
+          {% if page.whatToAvoid.items and page.whatToAvoid.items.size > 0 %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for itm in page.whatToAvoid.items %}
+            <div class="p-4 bg-white border border-rose-200 space-y-2">
+              <div class="text-xs font-semibold text-rose-800 flex items-center gap-1.5">
+                <span class="text-rose-500 font-bold"> </span>
+                <span>{{ itm.title }}</span>
+              </div>
+              <p class="text-xs text-[#5A6270] leading-relaxed">{{ itm.description }}</p>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- Related Guides Section -->
+        {% if page.relatedGuideSlugs and page.relatedGuideSlugs.size > 0 %}
+        <section id="related-guides" class="scroll-mt-24 space-y-6 pt-8 border-t border-[#99BFF9]/30">
+          <div class="border-b border-[#99BFF9]/25 pb-2">
+            <span class="text-xs uppercase tracking-widest text-[#2A548E] font-semibold">Continue Discovery</span>
+            <h2 class="font-serif-display text-2xl sm:text-3xl text-[#1E232B] font-normal">Related Gift Guides</h2>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {% for r_slug in page.relatedGuideSlugs %}
+              {% assign r_guide = site.guides | where: "slug", r_slug | first %}
+              {% if r_guide %}
+              <a href="/{{ r_guide.slug }}/" class="group cursor-pointer flex flex-col justify-between bg-[#FAF9F6] border border-[#99BFF9]/30 hover:border-[#99BFF9] transition-all p-5 block">
+                <div class="space-y-4">
+                  <div class="overflow-hidden">
+                    <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-sm aspect-[16/9] group-hover:scale-[1.01] transition-transform duration-300" role="img" aria-label="{{ r_guide.heroImageAlt }}">
+                      {% assign r_img = r_guide.heroImageType | default: r_guide.image | default: r_guide.slug %}
+                      {% include editorial-image.html type=r_img alt=r_guide.heroImageAlt thumb=true %}
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-xs text-[#5A6270]">
+                      <span class="text-[#226E56] font-semibold">{{ r_guide.category }}</span>
+                      <span aria-hidden="true"> </span>
+                      <span>{{ r_guide.readTime }}</span>
+                    </div>
+                    <h3 class="font-serif-display text-xl text-[#1E232B] font-normal leading-snug group-hover:text-[#2A548E] transition-colors">
+                      {{ r_guide.title }}
+                    </h3>
+                    <p class="text-xs sm:text-sm text-[#5A6270] leading-relaxed line-clamp-2">
+                      {{ r_guide.deck }}
+                    </p>
+                  </div>
+                </div>
+                <div class="pt-4 mt-4 border-t border-[#99BFF9]/20 flex items-center justify-between text-xs text-[#5A6270]">
+                  {% assign r_last_mod = r_guide.lastModifiedDate | default: r_guide.updatedDate %}
+                  {% assign r_pub = r_guide.publishedDate %}
+                  {% if r_last_mod and r_last_mod != "" %}
+                  <span>{% if r_last_mod contains "Updated" %}{{ r_last_mod }}{% else %}Updated {{ r_last_mod }}{% endif %}</span>
+                  {% elsif r_pub and r_pub != "" %}
+                  <span>{% if r_pub contains "Published" %}{{ r_pub }}{% else %}Published {{ r_pub }}{% endif %}</span>
+                  {% endif %}
+                  <span class="text-[#2A548E] font-medium flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                    Explore
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  </span>
+                </div>
+              </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
+
+        <!-- Author Bio Card -->
+        <section class="bg-[#FAF9F6] border border-[#99BFF9]/30 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div class="w-16 h-16 rounded-full bg-[#2A548E] text-white flex items-center justify-center font-serif text-2xl font-bold shrink-0">
+            {{ page.author.name | slice: 0, 1 }}
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <h3 class="font-serif-display text-xl text-[#1E232B] font-medium">Written by {{ page.author.name }}</h3>
+              <span class="text-xs text-[#226E56] font-medium">  {{ page.author.role }}</span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#5A6270] leading-relaxed">
+              {{ page.author.bio }}
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Newsletter -->
+  <div class="mt-20">
+    {% include newsletter.html %}
+  </div>
+</article>

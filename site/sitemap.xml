@@ -1,0 +1,130 @@
+---
+layout: null
+permalink: /sitemap.xml
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>{{ site.url }}/</loc>
+    {% assign home_lastmod = nil %}
+    {% for page in site.pages %}
+      {% if page.url == "/" %}
+        {% if page.updatedDate %}
+          {% assign home_lastmod = page.updatedDate | date: "%Y-%m-%d" %}
+        {% elsif page.publishedDate %}
+          {% assign home_lastmod = page.publishedDate | date: "%Y-%m-%d" %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    {% if home_lastmod %}
+    <lastmod>{{ home_lastmod }}</lastmod>
+    {% endif %}
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Static Pages -->
+  {% for page in site.pages %}
+    {% assign is_valid = true %}
+    {% if page.url == "/" or page.url == "/index.html" or page.url == "/sitemap.xml" %}
+      {% assign is_valid = false %}
+    {% endif %}
+    {% if page.url contains "editor-backups" or page.url contains "404" %}
+      {% assign is_valid = false %}
+    {% endif %}
+    {% if page.robots %}
+      {% if page.robots.index == false or page.robots == "noindex" or page.robots.index == "false" %}
+        {% assign is_valid = false %}
+      {% endif %}
+    {% endif %}
+    {% if page.url == "/collections/" %}
+      {% assign is_valid = false %}
+    {% endif %}
+
+    {% if is_valid %}
+  <url>
+    <loc>{{ site.url }}{{ page.url }}</loc>
+    {% assign page_lastmod = nil %}
+    {% if page.updatedDate %}
+      {% assign page_lastmod = page.updatedDate | date: "%Y-%m-%d" %}
+    {% elsif page.publishedDate %}
+      {% assign page_lastmod = page.publishedDate | date: "%Y-%m-%d" %}
+    {% endif %}
+    {% if page_lastmod %}
+    <lastmod>{{ page_lastmod }}</lastmod>
+    {% endif %}
+    <changefreq>monthly</changefreq>
+    {% assign priority = 0.5 %}
+    {% if page.url == "/gift-finder/" %}
+      {% assign priority = 0.9 %}
+    {% elsif page.url == "/gift-guides/" or page.url == "/articles/" %}
+      {% assign priority = 0.8 %}
+    {% elsif page.url == "/terms/" or page.url == "/privacy/" or page.url == "/affiliate-disclosure/" %}
+      {% assign priority = 0.3 %}
+    {% endif %}
+    <priority>{{ priority }}</priority>
+  </url>
+    {% endif %}
+  {% endfor %}
+
+  <!-- Gift Guides -->
+  {% for guide in site.guides %}
+    {% assign is_valid = true %}
+    {% if guide.robots %}
+      {% if guide.robots.index == false or guide.robots == "noindex" or guide.robots.index == "false" %}
+        {% assign is_valid = false %}
+      {% endif %}
+    {% endif %}
+    {% if guide.published == false %}
+      {% assign is_valid = false %}
+    {% endif %}
+
+    {% if is_valid %}
+  <url>
+    <loc>{{ site.url }}{{ guide.url }}</loc>
+    {% assign guide_lastmod = nil %}
+    {% if guide.updatedDate %}
+      {% assign guide_lastmod = guide.updatedDate | date: "%Y-%m-%d" %}
+    {% elsif guide.publishedDate %}
+      {% assign guide_lastmod = guide.publishedDate | date: "%Y-%m-%d" %}
+    {% endif %}
+    {% if guide_lastmod %}
+    <lastmod>{{ guide_lastmod }}</lastmod>
+    {% endif %}
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+    {% endif %}
+  {% endfor %}
+
+  <!-- Articles -->
+  {% for article in site.articles %}
+    {% assign is_valid = true %}
+    {% if article.robots %}
+      {% if article.robots.index == false or article.robots == "noindex" or article.robots.index == "false" %}
+        {% assign is_valid = false %}
+      {% endif %}
+    {% endif %}
+    {% if article.published == false %}
+      {% assign is_valid = false %}
+    {% endif %}
+
+    {% if is_valid %}
+  <url>
+    <loc>{{ site.url }}{{ article.url }}</loc>
+    {% assign article_lastmod = nil %}
+    {% if article.updatedDate %}
+      {% assign article_lastmod = article.updatedDate | date: "%Y-%m-%d" %}
+    {% elsif article.publishedDate %}
+      {% assign article_lastmod = article.publishedDate | date: "%Y-%m-%d" %}
+    {% endif %}
+    {% if article_lastmod %}
+    <lastmod>{{ article_lastmod }}</lastmod>
+    {% endif %}
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+    {% endif %}
+  {% endfor %}
+</urlset>

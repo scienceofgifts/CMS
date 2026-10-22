@@ -1,0 +1,46 @@
+header:
+  - title: Gift Guides
+    url: /gift-guides/
+  - title: Gift Finder
+    url: /gift-finder/
+    sparkle: true
+  - title: Articles
+    url: /articles/
+  - title: For Men
+    url: /for-men/
+  - title: For Women
+    url: /for-women/
+  - title: Shop
+    url: https://shop.scienceofgifts.com/
+    external: true
+    badge: true
+footer_explore:
+  - title: Gift Finder
+    url: /gift-finder/
+  - title: Gift Guides
+    url: /gift-guides/
+  - title: Articles & Essays
+    url: /articles/
+  - title: Gifts for Men
+    url: /for-men/
+  - title: Gifts for Women
+    url: /for-women/
+  - title: Official Shop
+    url: https://shop.scienceofgifts.com/
+    external: true
+footer_editorial:
+  - title: About Science of Gifts
+    url: /about/
+  - title: Affiliate Disclosure
+    url: /affiliate-disclosure/
+  - title: Editorial Philosophy
+    url: /avoid-overthinking-gift-decisions/
+  - title: Contact Desk
+    url: /contact/
+footer_legal:
+  - title: Privacy Policy
+    url: /privacy/
+  - title: Terms of Service
+    url: /terms/
+  - title: Sitemap
+    url: /sitemap/

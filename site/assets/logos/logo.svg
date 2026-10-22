@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" width="600" height="120">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&amp;display=swap');
+      .logo-text {
+        font-family: 'Playfair Display', 'Didot', 'Bodoni MT', 'Cinzel', 'Times New Roman', serif;
+        font-size: 42px;
+        font-weight: 500;
+        fill: #1E232B;
+        letter-spacing: 0.12em;
+      }
+      .line-art {
+        stroke: #1E232B;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+    </style>
+  </defs>
+  <!-- Left Text -->
+  <text x="10" y="72" class="logo-text">SCIENCE</text>
+  <!-- Central Ribbon Divider -->
+  <g transform="translate(245, 0)">
+    <!-- Left connecting line -->
+    <line x1="0" y1="62" x2="38" y2="62" class="line-art" />
+    <!-- Ribbon Bow Icon -->
+    <g transform="translate(54, 62)">
+      <!-- Left bow loop -->
+      <path d="M 0,0 C -12,-12 -22,-6 -14,0 C -22,6 -12,12 0,0 Z" class="line-art" />
+      <!-- Right bow loop -->
+      <path d="M 0,0 C 12,-12 22,-6 14,0 C 22,6 12,12 0,0 Z" class="line-art" />
+      <!-- Center knot -->
+      <circle cx="0" cy="0" r="2.5" fill="#1E232B" />
+      <!-- Left ribbon tail -->
+      <path d="M -2,2 Q -8,12 -12,16" class="line-art" />
+      <!-- Right ribbon tail -->
+      <path d="M 2,2 Q 8,12 12,16" class="line-art" />
+    </g>
+    <!-- Right connecting line -->
+    <line x1="70" y1="62" x2="108" y2="62" class="line-art" />
+  </g>
+  <!-- Right Text -->
+  <text x="368" y="72" class="logo-text">OF GIFTS</text>
+</svg>

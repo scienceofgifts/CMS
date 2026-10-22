@@ -1,0 +1,58 @@
+{% assign p = include.product %}
+{% if p %}
+{% assign vendor_clean = p.vendor | default: p.merchant | downcase %}
+{% assign vendor_url_clean = p.vendorUrl | default: p.product_url | downcase %}
+{% assign is_own_product = false %}
+{% if vendor_clean contains "scienceofgifts" or vendor_clean contains "science of gifts" or vendor_url_clean contains "scienceofgifts.com" %}
+  {% assign is_own_product = true %}
+{% endif %}
+{% assign vendor_name = p.vendor | default: p.merchant | split: ',' | first %}
+{% assign card_price_num = p.priceNumber | default: 0 %}
+<div class="product-card men-product-card women-product-card bg-white border border-[#99BFF9]/25 p-5 flex flex-col justify-between space-y-4 hover:border-[#99BFF9] transition-all rounded-xs shadow-2xs group" 
+     id="{{ p.id }}"
+     data-id="{{ p.id }}"
+     data-recipients="{{ p.recipients | join: ',' | downcase }}"
+     data-interests="{{ p.interests | join: ',' | downcase }}"
+     data-price="{{ card_price_num }}"
+     data-price-range="{{ p.priceRange }}"
+     data-title="{{ p.title | escape }}">
+  <div class="space-y-3">
+    <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/25 rounded-sm aspect-[4/3] group-hover:scale-[1.01] transition-transform duration-300">
+      {% assign p_img = p.image | default: p.imageType | default: p.id %}
+      {% include editorial-image.html type=p_img alt=p.title thumb=true %}
+    </div>
+    <div class="flex items-center justify-between gap-2 text-xs pt-1 border-b border-[#99BFF9]/20 pb-2">
+      <div class="flex items-center gap-1.5 min-w-0">
+        <span class="font-mono-code font-bold text-sm text-[#154D3B] shrink-0">{{ p.price }}</span>
+        <span class="text-[#5A6270] truncate text-[11px]">· {{ vendor_name }}</span>
+      </div>
+      <button data-id="{{ p.id }}" class="toggle-product-bookmark px-2.5 py-1 border text-xs font-medium transition-colors inline-flex items-center gap-1.5 cursor-pointer border-[#99BFF9]/40 text-[#5A6270] hover:text-[#1E232B] rounded">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>
+        <span class="save-label">Save</span>
+      </button>
+    </div>
+    <div class="text-[10px] uppercase tracking-wider font-semibold text-[#226E56] flex items-center gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 text-[#226E56]"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"></path></svg>
+      <span>{{ p.badgeLabel | default: 'Handpicked Selection' }}</span>
+    </div>
+    <h3 class="font-serif-display text-lg text-[#1E232B] font-normal leading-snug group-hover:text-[#2A548E] transition-colors">
+      {{ p.title }}
+    </h3>
+    {% if p.tagline %}
+    <p class="text-xs text-[#5A6270] leading-relaxed line-clamp-2 italic">{{ p.tagline }}</p>
+    {% endif %}
+    {% assign why_text = p.whyItMakesAGreatGift | default: p.why_it_makes_a_great_gift %}
+    {% if why_text %}
+    <div class="p-2.5 bg-[#E8F8F1]/80 border-l-3 border-[#226E56] text-[11px] text-[#226E56] leading-tight">
+      <strong>Why it's singular:</strong> {{ why_text }}
+    </div>
+    {% endif %}
+  </div>
+  <div class="pt-3 border-t border-[#99BFF9]/20 flex items-center justify-between gap-2">
+    <a href="{{ p.vendorUrl | default: p.product_url }}"{% unless is_own_product %} rel="noopener noreferrer sponsored"{% endunless %} class="w-full justify-center px-4 py-2 bg-white text-black border border-black hover:opacity-80 transition-opacity duration-200 text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 shadow-2xs rounded-none">
+      View on {{ vendor_name }}
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+    </a>
+  </div>
+</div>
+{% endif %}

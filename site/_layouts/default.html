@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include head.html %}
+</head>
+<body class="bg-[#FAF9F6] text-[#1E232B] antialiased selection:bg-[#C3F3DF] selection:text-[#154D3B] min-h-screen flex flex-col">
+  {% include header.html %}
+  <main class="flex-1">
+    {{ content }}
+  </main>
+  {% include footer.html %}
+  <script src="{{ '/assets/js/catalog-data.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+</body>
+</html>

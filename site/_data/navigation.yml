@@ -1,0 +1,45 @@
+header:
+  - title: "Gift Finder"
+    url: "/gift-finder/"
+    sparkle: true
+  - title: "Gift Guides"
+    url: "/history-gifts/"
+  - title: "Articles"
+    url: "/avoid-overthinking-gift-decisions/"
+  - title: "Collections"
+    url: "/collections/"
+  - title: "Shop"
+    url: "https://shop.scienceofgifts.com/"
+    external: true
+    badge: true
+
+footer_explore:
+  - title: "Gift Finder"
+    url: "/gift-finder/"
+  - title: "Gift Guides"
+    url: "/history-gifts/"
+  - title: "Articles & Essays"
+    url: "/avoid-overthinking-gift-decisions/"
+  - title: "Official Shop"
+    url: "https://shop.scienceofgifts.com/"
+    external: true
+
+footer_editorial:
+  - title: "About Science of Gifts"
+    url: "/about/"
+  - title: "Affiliate Disclosure"
+    url: "/affiliate-disclosure/"
+  - title: "Editorial Philosophy"
+    url: "/avoid-overthinking-gift-decisions/"
+  - title: "Product Studio"
+    url: "/studio/"
+  - title: "Contact Desk"
+    url: "/contact/"
+
+footer_legal:
+  - title: "Privacy Policy"
+    url: "/privacy/"
+  - title: "Terms of Service"
+    url: "/terms/"
+  - title: "Sitemap"
+    url: "/sitemap/"

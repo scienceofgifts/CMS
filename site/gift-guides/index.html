@@ -1,0 +1,98 @@
+---
+layout: default
+title: "All Gift Guides   Science of Gifts"
+description: "Our comprehensive library of researched, field-tested gift guides organized by recipient obsession, craft domain, and material provenance."
+canonical_url: "https://scienceofgifts.com/gift-guides/"
+---
+<div id="gift-guides-page-container" class="pb-16 space-y-12">
+  <!-- Header -->
+  <header class="pt-12 pb-10 border-b border-[#99BFF9]/30 bg-[#FAF9F6]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+      <div class="text-xs uppercase tracking-widest text-[#226E56] font-semibold">Editorial Archive</div>
+      <h1 class="font-serif-display text-4xl sm:text-5xl text-[#1E232B] font-normal leading-tight">
+        All Gift Guides
+      </h1>
+      <p class="text-base text-[#5A6270] max-w-2xl leading-relaxed">
+        Our comprehensive library of researched, field-tested gift guides. Organized by recipient obsession, craft domain, and material provenance.
+      </p>
+    </div>
+  </header>
+
+  <!-- Guides Grid Section -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <!-- Category Filter Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#99BFF9]/20">
+      <div id="gift-guides-category-buttons" class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        {% for cat in site.data.collections.gift_guides %}
+        <button data-category="{{ cat.title }}" class="guide-cat-btn px-3.5 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap cursor-pointer {% if forloop.first %}bg-[#2A548E] text-white{% else %}text-[#5A6270] hover:text-[#2A548E] hover:bg-[#EEF5FF]{% endif %}">
+          {{ cat.title }}
+        </button>
+        {% endfor %}
+      </div>
+      <div id="gift-guides-results-count" class="font-mono-code text-xs text-[#5A6270] shrink-0">
+        Showing 1   {{ site.guides.size }} of {{ site.guides.size }} guides
+      </div>
+    </div>
+
+    <!-- Guides Dynamic Grid -->
+    <div id="gift-guides-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for guide in site.guides %}
+      <a href="{{ guide.url }}" class="group cursor-pointer flex flex-col justify-between bg-[#FAF9F6] border border-[#99BFF9]/30 hover:border-[#99BFF9] transition-all p-5 block" data-category="{{ guide.category | downcase }}">
+        <div class="space-y-4">
+          <div class="overflow-hidden">
+            <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-sm aspect-[16/9] group-hover:scale-[1.01] transition-transform duration-300" role="img" aria-label="{{ guide.heroImageAlt | default: guide.title | escape }}">
+              {% assign g_img = guide.heroImageType | default: guide.image | default: guide.slug %}
+              {% include editorial-image.html type=g_img alt=guide.heroImageAlt thumb=true %}
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-xs text-[#5A6270]">
+              <span class="text-[#226E56] font-semibold">{{ guide.category | default: 'Curation' }}</span>
+              <span aria-hidden="true"> </span>
+              <span>{{ guide.readTime | default: '10 min read' }}</span>
+            </div>
+            <h3 class="font-serif-display text-xl sm:text-2xl text-[#1E232B] font-normal leading-snug group-hover:text-[#2A548E] transition-colors">
+              {{ guide.title }}
+            </h3>
+            <p class="text-xs sm:text-sm text-[#5A6270] leading-relaxed line-clamp-2">
+              {{ guide.deck | default: guide.description }}
+            </p>
+          </div>
+        </div>
+        <div class="pt-4 mt-4 border-t border-[#99BFF9]/20 flex items-center justify-between text-xs text-[#5A6270]">
+          {% assign g_last_mod = guide.lastModifiedDate | default: guide.updatedDate %}
+          {% if g_last_mod %}
+            <span>Updated {{ g_last_mod }}</span>
+          {% elsif guide.publishedDate %}
+            <span>{{ guide.publishedDate }}</span>
+          {% else %}
+            <span>Autumn 2026</span>
+          {% endif %}
+          <span class="text-[#2A548E] font-medium flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+            Explore
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-3 h-3"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination controls -->
+    <div class="pt-8 border-t border-[#99BFF9]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div id="gift-guides-page-status" class="text-xs text-[#5A6270]">Page 1 of 1</div>
+      <div id="gift-guides-pagination-controls" class="flex items-center gap-2">
+        <button id="gift-guides-prev-btn" disabled class="px-3 py-1.5 border border-[#99BFF9]/40 text-xs font-medium text-[#1E232B] disabled:opacity-30 hover:bg-[#EEF5FF] transition-colors flex items-center gap-1 cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left w-3.5 h-3.5" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+          Previous
+        </button>
+        <button id="gift-guides-next-btn" disabled class="px-3 py-1.5 border border-[#99BFF9]/40 text-xs font-medium text-[#1E232B] disabled:opacity-30 hover:bg-[#EEF5FF] transition-colors flex items-center gap-1 cursor-pointer">
+          Next
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-3.5 h-3.5" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter Section -->
+  {% include newsletter.html %}
+</div>

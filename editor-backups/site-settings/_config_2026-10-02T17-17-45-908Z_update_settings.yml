@@ -1,0 +1,52 @@
+title: "Science of Gifts"
+tagline: "Thoughtful gifts, chosen with a little more thought."
+description: "An independent editorial gift publication featuring rigorously researched gift guides, thoughtful essays, and curated recommendations."
+url: "https://scienceofgifts.com"
+baseurl: ""
+permalink: /:title/
+timezone: Europe/London
+
+collections:
+  guides:
+    output: true
+    permalink: /:title/
+  articles:
+    output: true
+    permalink: /:title/
+
+defaults:
+  - scope:
+      path: ""
+      type: "guides"
+    values:
+      layout: "guide"
+  - scope:
+      path: ""
+      type: "articles"
+    values:
+      layout: "article"
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - package.json
+  - server.js
+  - server.ts
+  - README.md
+  - metadata.json
+  - .local-editor
+  - editor-backups
+  - dist
+  - src
+  - tsconfig.json
+  - vite.config.ts

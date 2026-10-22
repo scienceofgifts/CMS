@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://scienceofgifts.com/sitemap.xml

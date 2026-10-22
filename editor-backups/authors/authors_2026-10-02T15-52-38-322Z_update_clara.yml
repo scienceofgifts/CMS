@@ -1,0 +1,15 @@
+clara:
+  name: Clara Vance
+  role: Editor-in-Chief & Lead Researcher [TEST]
+  bio: Former architectural historian and material culture researcher. Clara spends weeks field-testing recommendations to ensure every item carries tangible weight, narrative depth, and enduring durability.
+  avatarSeed: clara
+julian:
+  name: Julian Mercer
+  role: Senior Editor, History & Literature
+  bio: Julian writes on material history, classic cartography, and rare editions. He holds an M.Phil in Modern European History from Oxford.
+  avatarSeed: julian
+elena:
+  name: Elena Rostova
+  role: Contributing Editor, Science & Craft
+  bio: Elena investigates the intersection of precision engineering, culinary tools, and optical instruments. She previously consulted for museum conservation archives.
+  avatarSeed: elena

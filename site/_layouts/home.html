@@ -1,0 +1,368 @@
+---
+layout: default
+---
+{% assign all_guides = site.guides %}
+{% if page.featured_guide_slug %}
+  {% assign featured_guide = all_guides | where: "slug", page.featured_guide_slug | first | default: all_guides.first %}
+{% else %}
+  {% assign featured_guide = all_guides | where: "slug", "history-gifts" | first | default: all_guides.first %}
+{% endif %}
+{% assign all_articles = site.articles %}
+{% if page.featured_article_slug %}
+  {% assign featured_article = all_articles | where: "slug", page.featured_article_slug | first | default: all_articles.first %}
+{% else %}
+  {% assign featured_article = all_articles | where: "slug", "avoid-overthinking-gift-decisions" | first | default: all_articles.first %}
+{% endif %}
+{% assign guides_limit = page.secondary_guides_limit | default: 3 %}
+{% assign articles_limit = page.secondary_articles_limit | default: 2 %}
+<div class="space-y-16 lg:space-y-24">
+  <!-- 1. Editorial Hero Header -->
+  <section class="pt-8 sm:pt-12 pb-12 border-b border-[#99BFF9]/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div class="lg:col-span-7 space-y-6">
+          <div class="flex items-center gap-2 text-xs uppercase tracking-widest text-[#226E56] font-semibold">
+            <span>{{ page.edition_badge | default: "The Independent Gift Publication   Autumn 2026 Edition" }}</span>
+          </div>
+          <h1 class="font-serif-display text-4xl sm:text-5xl lg:text-6xl text-[#1E232B] font-normal leading-[1.1] tracking-tight text-balance">
+            {{ page.hero_title | default: "Thoughtful gifts, chosen with a little more thought." }}
+          </h1>
+          <p class="text-base sm:text-lg text-[#5A6270] leading-relaxed max-w-xl">
+            {{ page.hero_lead | default: "Science of Gifts helps you find singular, enduring objects for specific people, obsessions, milestones, and personalities. We research material history, interview subject-matter scholars, and test every item in our London studio." }}
+          </p>
+          <div class="pt-2 flex flex-wrap items-center gap-4">
+            <a href="{{ featured_guide.url | default: '/history-gifts/' }}" class="px-6 py-3 bg-gradient-to-r from-[#99BFF9] to-[#C3F3DF] text-[#1E232B] font-bold text-xs uppercase tracking-wider transition-opacity hover:opacity-90 duration-300 flex items-center gap-2 shadow-sm">
+              Featured Guide: {{ featured_guide.category | default: 'History' }} Gifts
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </a>
+            <a href="{{ featured_article.url | default: '/avoid-overthinking-gift-decisions/' }}" class="px-6 py-3 bg-[#FAF9F6] hover:bg-[#EEF5FF] text-[#2A548E] border border-[#99BFF9]/60 text-xs font-semibold uppercase tracking-wider transition-colors duration-300 shadow-xs">
+              Read Essay: Gift Psychology
+            </a>
+          </div>
+        </div>
+        <div class="lg:col-span-5">
+          <div class="relative">
+            <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-sm aspect-[4/3] shadow-sm" role="img" aria-label="{{ page.hero_image_alt | default: 'Curated still life of archival gifts: brass instruments, fountain pen, and clothbound books' | escape }}">
+              {% assign h_img = page.hero_image | default: 'home-hero' %}
+              {% include editorial-image.html type=h_img alt=page.hero_image_alt %}
+            </div>
+            {% if page.hero_image_caption %}
+            <div class="mt-3 text-[11px] text-[#5A6270] italic text-right font-serif">
+              {{ page.hero_image_caption }}
+            </div>
+            {% else %}
+            <div class="mt-3 text-[11px] text-[#5A6270] italic text-right font-serif">
+              Still Life No. 14: Objects of enduring provenance. Photographed in studio.
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% if content and content != "" %}
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-slate max-w-none">
+    {{ content }}
+  </section>
+  {% endif %}
+
+  <!-- 2. Featured Gift Guides Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-[#99BFF9]/30 gap-4">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-[#226E56] font-semibold">Curated Recommendations</span>
+        <h2 class="font-serif-display text-3xl text-[#1E232B] font-normal mt-1">Featured Gift Guides</h2>
+      </div>
+      <a href="/gift-guides/" class="text-xs font-semibold text-[#2A548E] hover:underline flex items-center gap-1 uppercase tracking-wider self-start sm:self-auto">
+        View All Guides ({{ site.guides.size | default: 66 }})
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-3.5 h-3.5" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+      </a>
+    </div>
+
+    <div class="space-y-8">
+      <!-- Primary Large Hero Guide Card -->
+      {% if featured_guide %}
+      <a href="{{ featured_guide.url }}" class="group cursor-pointer grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center bg-[#FAF9F6] border border-[#99BFF9]/30 p-6 lg:p-8 hover:border-[#99BFF9] transition-all block">
+        <div class="lg:col-span-7 overflow-hidden">
+          <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-sm aspect-[16/9] group-hover:scale-[1.01] transition-transform duration-300" role="img" aria-label="{{ featured_guide.heroImageAlt | default: featured_guide.title | escape }}">
+            {% assign fg_img = featured_guide.heroImageType | default: featured_guide.image | default: featured_guide.slug %}
+            {% include editorial-image.html type=fg_img alt=featured_guide.heroImageAlt thumb=true %}
+          </div>
+        </div>
+        <div class="lg:col-span-5 space-y-4">
+          <div class="flex items-center gap-2 text-xs text-[#5A6270]">
+            <span class="text-[#226E56] font-semibold">{{ featured_guide.category | default: 'Curation' }}</span>
+            <span aria-hidden="true"> </span>
+            <span>{{ featured_guide.readTime | default: '10 min read' }}</span>
+            <span aria-hidden="true"> </span>
+            <span>{{ featured_guide.publishedDate | default: 'Autumn 2026' }}</span>
+          </div>
+          <h3 class="font-serif-display text-2xl sm:text-3xl lg:text-4xl text-[#1E232B] font-normal leading-tight group-hover:text-[#2A548E] transition-colors">
+            {{ featured_guide.title }}
+          </h3>
+          <p class="text-sm text-[#5A6270] leading-relaxed line-clamp-3">
+            {{ featured_guide.deck | default: featured_guide.description }}
+          </p>
+          <div class="pt-2 flex items-center justify-between text-xs text-[#5A6270] border-t border-[#99BFF9]/20">
+            {% assign fg_last_mod = featured_guide.lastModifiedDate | default: featured_guide.updatedDate %}
+            {% if fg_last_mod %}
+              <span>Updated {{ fg_last_mod }}</span>
+            {% elsif featured_guide.publishedDate %}
+              <span>{{ featured_guide.publishedDate }}</span>
+            {% else %}
+              <span>Autumn 2026</span>
+            {% endif %}
+            <span class="text-[#2A548E] font-medium group-hover:translate-x-1 transition-transform flex items-center gap-1">
+              Read Guide
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-3.5 h-3.5" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </span>
+          </div>
+        </div>
+      </a>
+      {% endif %}
+
+      <!-- Multi-Column Secondary Guide Grid (Limit controlled by secondary_guides_limit) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% assign guides_shown = 0 %}
+        {% for guide in site.guides %}
+          {% if guide.slug != featured_guide.slug and guides_shown < guides_limit %}
+          <a href="{{ guide.url }}" class="group cursor-pointer flex flex-col justify-between bg-[#FAF9F6] border border-[#99BFF9]/30 hover:border-[#99BFF9] transition-all p-5 block">
+            <div class="space-y-4">
+              <div class="overflow-hidden">
+                <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-sm aspect-[16/9] group-hover:scale-[1.01] transition-transform duration-300" role="img" aria-label="{{ guide.heroImageAlt | default: guide.title | escape }}">
+                  {% assign g_img = guide.heroImageType | default: guide.image | default: guide.slug %}
+                  {% include editorial-image.html type=g_img alt=guide.heroImageAlt thumb=true %}
+                </div>
+              </div>
+              <div class="space-y-2">
+                <div class="flex items-center gap-2 text-xs text-[#5A6270]">
+                  <span class="text-[#226E56] font-semibold">{{ guide.category | default: 'Curation' }}</span>
+                  <span aria-hidden="true"> </span>
+                  <span>{{ guide.readTime | default: '9 min read' }}</span>
+                </div>
+                <h3 class="font-serif-display text-xl sm:text-2xl text-[#1E232B] font-normal leading-snug group-hover:text-[#2A548E] transition-colors">
+                  {{ guide.title }}
+                </h3>
+                <p class="text-xs sm:text-sm text-[#5A6270] leading-relaxed line-clamp-2">
+                  {{ guide.deck | default: guide.description }}
+                </p>
+              </div>
+            </div>
+            <div class="pt-4 mt-4 border-t border-[#99BFF9]/20 flex items-center justify-between text-xs text-[#5A6270]">
+              {% assign g_last_mod = guide.lastModifiedDate | default: guide.updatedDate %}
+              {% if g_last_mod %}
+                <span>Updated {{ g_last_mod }}</span>
+              {% elsif guide.publishedDate %}
+                <span>{{ guide.publishedDate }}</span>
+              {% else %}
+                <span>Autumn 2026</span>
+              {% endif %}
+              <span class="text-[#2A548E] font-medium flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                Explore
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-3.5 h-3.5" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+              </span>
+            </div>
+          </a>
+          {% assign guides_shown = guides_shown | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Taxonomy of Passions / Categories -->
+  <section class="bg-[#EEF5FF]/80 border-y border-[#99BFF9]/20 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
+        <span class="text-xs uppercase tracking-widest text-[#2A548E] font-semibold">Taxonomy of Passions</span>
+        <h2 class="font-serif-display text-3xl text-[#1E232B] font-normal">Browse by Interest</h2>
+        <p class="text-sm text-[#5A6270]">Discover gifts calibrated to the specific obsessions of scholars, makers, cooks, and explorers.</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for cat in site.data.interests %}
+        <a href="{{ cat.url }}" class="group cursor-pointer p-6 bg-[#FAF9F6] border border-[#99BFF9]/25 hover:border-[#99BFF9] transition-all space-y-3 block">
+          <div class="flex items-center justify-between">
+            <h3 class="font-serif-display text-xl text-[#1E232B] group-hover:text-[#2A548E] transition-colors">{{ cat.name }}</h3>
+            <span class="font-mono-code text-xs text-[#5A6270]">{{ cat.count }} guides</span>
+          </div>
+          <p class="text-xs text-[#5A6270] leading-relaxed line-clamp-2">{{ cat.description }}</p>
+          <div class="pt-2 flex items-center text-xs text-[#2A548E] font-medium group-hover:translate-x-1 transition-transform gap-1">
+            <span>Explore category</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-3.5 h-3.5" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Shop Science of Gifts Banner -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-[#132644] text-[#EEF5FF] p-8 sm:p-12 lg:p-16 relative overflow-hidden border border-[#99BFF9]/30">
+      <div class="absolute -right-12 -bottom-12 w-96 h-96 rounded-full bg-[#99BFF9]/10 pointer-events-none blur-2xl"></div>
+      <div class="relative z-10 max-w-3xl space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-[#C3F3DF]/15 border border-[#C3F3DF]/30 text-[#C3F3DF] text-xs font-semibold uppercase tracking-widest">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag w-3.5 h-3.5" aria-hidden="true"><path d="M16 10a4 4 0 0 1-8 0"></path><path d="M3.103 6.034h17.794"></path><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"></path></svg>
+          <span>Official Store</span>
+        </div>
+        <h2 class="font-serif-display text-3xl sm:text-4xl lg:text-5xl text-white font-normal leading-tight">
+          {{ page.shop_banner.title | default: "Shop Science of Gifts" }}
+        </h2>
+        <p class="text-base sm:text-xl text-[#EEF5FF]/90 font-serif leading-relaxed text-balance">
+          {{ page.shop_banner.deck | default: "History, mythology, and culture-inspired gifts designed for people who genuinely love the subject." }}
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs text-[#99BFF9]">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#C3F3DF]"></span>
+            <span>History &amp; Archival Objects</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#C3F3DF]"></span>
+            <span>Mythology &amp; Antiquity</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#C3F3DF]"></span>
+            <span>Culture &amp; Literature</span>
+          </div>
+        </div>
+        <div class="pt-4">
+          <a href="{{ page.shop_banner.url | default: 'https://shop.scienceofgifts.com/' }}" class="inline-flex items-center gap-2.5 px-7 py-4 bg-[#C3F3DF] hover:bg-[#a3ebcd] text-[#154D3B] text-xs font-bold uppercase tracking-wider transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 cursor-pointer">
+            <span>Visit Shop</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link w-4 h-4 text-[#154D3B]" aria-hidden="true"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Long-Form Essays / Gift Psychology -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-[#99BFF9]/30 gap-4">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-[#154D3B] font-semibold">Long-Form Essays</span>
+        <h2 class="font-serif-display text-3xl text-[#1E232B] font-normal mt-1">The Psychology of Giving</h2>
+      </div>
+      <a href="{{ featured_article.url | default: '/avoid-overthinking-gift-decisions/' }}" class="text-xs font-semibold text-[#2A548E] hover:underline flex items-center gap-1 uppercase tracking-wider self-start sm:self-auto">
+        All Essays
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-3.5 h-3.5" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+      </a>
+    </div>
+
+    <div class="space-y-8">
+      <!-- Lead Featured Essay Card -->
+      {% if featured_article %}
+      <a href="{{ featured_article.url }}" class="group cursor-pointer bg-[#FAF9F6] border border-[#99BFF9]/30 p-6 lg:p-8 hover:border-[#99BFF9] transition-all grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center block">
+        <div class="md:col-span-6 overflow-hidden">
+          <div class="relative overflow-hidden bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-sm aspect-[16/9] group-hover:scale-[1.01] transition-transform duration-300" role="img" aria-label="{{ featured_article.heroImageAlt | default: featured_article.title | escape }}">
+            {% assign fa_img = featured_article.heroImageType | default: featured_article.image | default: featured_article.slug %}
+            {% include editorial-image.html type=fa_img alt=featured_article.heroImageAlt thumb=true %}
+          </div>
+        </div>
+        <div class="md:col-span-6 space-y-4">
+          <div class="flex items-center gap-2 text-xs text-[#5A6270]">
+            <span class="text-[#226E56] font-semibold">{{ featured_article.category | default: 'Gift Psychology' }}</span>
+            <span aria-hidden="true"> </span>
+            <span>{{ featured_article.readTime | default: '7 min read' }}</span>
+            <span aria-hidden="true"> </span>
+            <span>{{ featured_article.publishedDate | default: 'Autumn 2026' }}</span>
+          </div>
+          <h3 class="font-serif-display text-2xl sm:text-3xl text-[#1E232B] font-normal leading-tight group-hover:text-[#2A548E] transition-colors">
+            {{ featured_article.title }}
+          </h3>
+          <p class="text-sm text-[#5A6270] leading-relaxed line-clamp-3">
+            {{ featured_article.deck | default: featured_article.description }}
+          </p>
+          <div class="pt-2 flex items-center justify-between text-xs text-[#5A6270] border-t border-[#99BFF9]/20">
+            {% assign fa_last_mod = featured_article.lastModifiedDate | default: featured_article.updatedDate %}
+            {% if fa_last_mod %}
+              <span>Updated {{ fa_last_mod }}</span>
+            {% elsif featured_article.publishedDate %}
+              <span>{{ featured_article.publishedDate }}</span>
+            {% else %}
+              <span>Autumn 2026</span>
+            {% endif %}
+            <span class="text-[#2A548E] font-medium group-hover:translate-x-1 transition-transform flex items-center gap-1">
+              Read Essay
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-3.5 h-3.5" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </span>
+          </div>
+        </div>
+      </a>
+      {% endif %}
+
+      <!-- Multi-Column Secondary Articles Grid (Limit controlled by secondary_articles_limit) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% assign articles_shown = 0 %}
+        {% for article in site.articles %}
+          {% if article.slug != featured_article.slug and articles_shown < articles_limit %}
+          <a href="{{ article.url }}" class="group cursor-pointer flex flex-col justify-between bg-[#FAF9F6] border border-[#99BFF9]/30 hover:border-[#99BFF9] transition-all p-5 block">
+            <div class="space-y-3">
+              <div class="flex items-center gap-2 text-xs text-[#5A6270]">
+                <span class="text-[#226E56] font-semibold">{{ article.category | default: 'Material Culture' }}</span>
+                <span aria-hidden="true"> </span>
+                <span>{{ article.readTime | default: '6 min read' }}</span>
+              </div>
+              <h3 class="font-serif-display text-lg sm:text-xl text-[#1E232B] font-normal leading-snug group-hover:text-[#2A548E] transition-colors">
+                {{ article.title }}
+              </h3>
+              <p class="text-xs sm:text-sm text-[#5A6270] leading-relaxed line-clamp-2">
+                {{ article.deck | default: article.description }}
+              </p>
+            </div>
+            <div class="pt-3 mt-4 border-t border-[#99BFF9]/20 flex items-center justify-between text-xs text-[#5A6270]">
+              {% assign art_last_mod = article.lastModifiedDate | default: article.updatedDate %}
+              {% if art_last_mod %}
+                <span>Updated {{ art_last_mod }}</span>
+              {% elsif article.publishedDate %}
+                <span>{{ article.publishedDate }}</span>
+              {% else %}
+                <span>Autumn 2026</span>
+              {% endif %}
+              <span class="text-[#2A548E] font-medium flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                Read
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-3.5 h-3.5" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+              </span>
+            </div>
+          </a>
+          {% assign articles_shown = articles_shown | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Editorial Quote Banner -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-4 py-8">
+    <div class="w-10 h-10 rounded-full bg-[#E8F8F1] text-[#154D3B] flex items-center justify-center mx-auto font-serif text-lg"> </div>
+    <blockquote class="font-serif-display text-xl sm:text-2xl text-[#1E232B] italic leading-relaxed text-balance">
+      &quot;{{ page.quote | default: "A great gift is not an assertion of the giver s wealth or cleverness. It is an act of attentive listening translated into physical form." }}&quot;
+    </blockquote>
+    <p class="text-xs uppercase tracking-widest text-[#5A6270]">{{ page.quote_author | default: "The Science of Gifts Editorial Charter" }}</p>
+  </section>
+
+  <!-- 7. Sunday Curation Newsletter -->
+  <section class="bg-[#FAF9F6] border-y border-[#99BFF9]/30 py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto text-center space-y-6">
+      <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#226E56]">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail w-3.5 h-3.5 text-[#226E56]" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
+        <span>The Sunday Curation</span>
+      </div>
+      <h2 class="font-serif-display text-2xl sm:text-3xl lg:text-4xl text-[#1E232B] font-normal leading-tight">
+        {{ page.newsletter.title | default: "One thoughtfully selected object. Every Sunday morning." }}
+      </h2>
+      <p class="text-sm sm:text-base text-[#5A6270] leading-relaxed max-w-xl mx-auto">
+        {{ page.newsletter.deck | default: "We send a single curated gift recommendation, the short history behind its craft, and practical advice on gift psychology. No marketing spam, ever." }}
+      </p>
+      <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onsubmit="event.preventDefault(); this.innerHTML='<div class=\'p-3 bg-[#E8F8F1] text-[#154D3B] text-xs font-semibold uppercase tracking-wider rounded\'>Thank you for subscribing to The Sunday Curation.</div>';">
+        <input type="email" placeholder="Your email address" required class="flex-1 px-4 py-2.5 text-sm bg-white border border-[#99BFF9]/40 focus:border-[#2A548E] focus:ring-1 focus:ring-[#99BFF9] outline-none transition-colors" />
+        <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-[#99BFF9] to-[#C3F3DF] text-[#1E232B] text-xs font-bold uppercase tracking-wider transition-opacity hover:opacity-90 duration-300 whitespace-nowrap shadow-xs">
+          Subscribe
+        </button>
+      </form>
+      <div class="text-[11px] text-[#5A6270]">
+        {{ page.newsletter.subscribers_count | default: "Over 42,000 discerning readers. Free forever. Unsubscribe in one click." }}
+      </div>
+    </div>
+  </section>
+</div>

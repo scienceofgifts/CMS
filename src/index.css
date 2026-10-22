@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@source "./**/*.{ts,tsx,js,jsx,html}";
+@source "../index.html";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-serif-display: "Playfair Display", Georgia, serif;
+  --font-sans-ui: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono-code: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --color-alabaster: #FAF9F6;
+  --color-charcoal: #1E232B;
+  --color-charcoal-muted: #5A6270;
+  --color-blue-dark: #1B365D;
+  --color-blue-medium: #2A548E;
+  --color-blue-accent: #99BFF9;
+  --color-blue-soft: #EEF5FF;
+  --color-mint-dark: #154D3B;
+  --color-mint-medium: #226E56;
+  --color-mint-soft: #E8F8F1;
+  --color-mint-accent: #C3F3DF;
+}
+
+:root {
+  --color-primary-blue: #99BFF9;
+  --color-primary-blue-dark: #1B365D;
+  --color-primary-blue-medium: #2A548E;
+  --color-soft-blue: #EEF5FF;
+  --color-primary-mint: #C3F3DF;
+  --color-primary-mint-dark: #154D3B;
+  --color-primary-mint-medium: #226E56;
+  --color-soft-mint: #E8F8F1;
+  --color-alabaster: #FAF9F6;
+  --color-charcoal: #1E232B;
+  --color-charcoal-muted: #5A6270;
+}
+
+body {
+  background-color: #FAF9F6;
+  color: #1E232B;
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Editorial prose typography for TipTap rich editor, preview panels, and rendered Markdown */
+.prose p,
+.tiptap p,
+.ProseMirror p {
+  margin-bottom: 1.25em;
+  line-height: 1.75;
+}
+
+.prose p:last-child,
+.tiptap p:last-child,
+.ProseMirror p:last-child {
+  margin-bottom: 0;
+}
+
+.tiptap h2,
+.ProseMirror h2,
+.prose h2 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: #1E232B;
+}
+
+.tiptap h3,
+.ProseMirror h3,
+.prose h3 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+  color: #1E232B;
+}
+
+.tiptap ul,
+.ProseMirror ul,
+.prose ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+}
+
+.tiptap ol,
+.ProseMirror ol,
+.prose ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+}
+
+.tiptap li,
+.ProseMirror li,
+.prose li {
+  margin-bottom: 0.35em;
+}
+
+.tiptap blockquote,
+.ProseMirror blockquote,
+.prose blockquote {
+  border-left: 3px solid #99BFF9;
+  padding-left: 1em;
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  font-style: italic;
+  color: #5A6270;
+}
+
+.tiptap a,
+.ProseMirror a,
+.prose a {
+  color: #2A548E;
+  text-decoration: underline;
+}
+
+.tiptap a:hover,
+.ProseMirror a:hover,
+.prose a:hover {
+  color: #1E232B;
+}
+
+.font-serif-display {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+.font-sans-ui {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+}
+
+.font-mono-code {
+  font-family: "JetBrains Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom scrollbars matching Science of Gifts */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF9F6;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8E1E8;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A9B8C6;
+}

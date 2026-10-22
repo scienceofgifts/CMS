@@ -1,0 +1,30 @@
+- id: history
+  name: History
+  count: 8
+  url: /history-gifts/
+  description: Cartographic reproductions, archival instruments, translated source texts, and heirloom historical artifacts. [TEST]
+- id: books
+  name: Books & Literature
+  count: 11
+  url: /book-lovers-gifts/
+  description: Typographic bookends, personal library embossers, reading lamps, and editions meant to outlast a lifetime.
+- id: science
+  name: Science & Astronomy
+  count: 6
+  url: /astronomy-gifts/
+  description: Optical glass prisms, brass mechanical models, star charts, and working mechanical balances.
+- id: travel
+  name: Travel & Field Notes
+  count: 7
+  url: /cartography-gifts/
+  description: Vegetable-tanned leather logbooks, compact pocket compasses, brass fountain pens, and expedition-grade gear.
+- id: food-drink
+  name: Food, Drink & Kitchen
+  count: 9
+  url: /solitary-cook-gifts/
+  description: Hand-hammered copper tools, cold-forged Japanese carbon steel, rare tea press pots, and single-estate olive oils.
+- id: craft
+  name: Craft & Workshop
+  count: 5
+  url: /architect-gifts/
+  description: Solid brass layout gauges, botanical wax sealing sets, hand-stitched linen aprons, and heirloom hand tools.
