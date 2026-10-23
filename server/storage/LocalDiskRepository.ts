@@ -74,48 +74,48 @@ export class LocalDiskRepository implements ContentRepository {
       : path.join(this.projectRoot, 'site');
 
     this.productsFile = path.join(this.jekyllRoot, '_data', 'products.yml');
-    this.productsBackupsDir = path.join(this.projectRoot, 'editor-backups', 'products');
+    this.productsBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'products');
 
     this.articlesDir = path.join(this.jekyllRoot, '_articles');
-    this.articlesBackupsDir = path.join(this.projectRoot, 'editor-backups', 'articles');
+    this.articlesBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'articles');
 
     this.guidesDir = path.join(this.jekyllRoot, '_guides');
-    this.guidesBackupsDir = path.join(this.projectRoot, 'editor-backups', 'guides');
+    this.guidesBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'guides');
 
     this.collectionsFile = path.join(this.jekyllRoot, '_data', 'collections.yml');
-    this.collectionsBackupsDir = path.join(this.projectRoot, 'editor-backups', 'collections');
+    this.collectionsBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'collections');
 
     this.interestsFile = path.join(this.jekyllRoot, '_data', 'interests.yml');
-    this.interestsBackupsDir = path.join(this.projectRoot, 'editor-backups', 'interests');
+    this.interestsBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'interests');
 
     this.authorsFile = path.join(this.jekyllRoot, '_data', 'authors.yml');
-    this.authorsBackupsDir = path.join(this.projectRoot, 'editor-backups', 'authors');
+    this.authorsBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'authors');
 
     this.navigationFile = path.join(this.jekyllRoot, '_data', 'navigation.yml');
-    this.navigationBackupsDir = path.join(this.projectRoot, 'editor-backups', 'navigation');
+    this.navigationBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'navigation');
 
     this.homepageFile = path.join(this.jekyllRoot, 'index.md');
-    this.homepageBackupsDir = path.join(this.projectRoot, 'editor-backups', 'homepage');
+    this.homepageBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'homepage');
 
     this.giftFinderYaml = path.join(this.jekyllRoot, '_data', 'gift_finder.yml');
     this.giftFinderFile = path.join(this.jekyllRoot, 'gift-finder', 'index.html');
-    this.giftFinderBackupsDir = path.join(this.projectRoot, 'editor-backups', 'gift-finder');
+    this.giftFinderBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'gift-finder');
 
-    this.pagesBackupsDir = path.join(this.projectRoot, 'editor-backups', 'pages');
+    this.pagesBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'pages');
 
     this.globalComponentsDir = path.join(this.jekyllRoot, '_includes');
-    this.globalComponentsBackupsDir = path.join(this.projectRoot, 'editor-backups', 'global-components');
+    this.globalComponentsBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'global-components');
 
     this.configFile = path.join(this.jekyllRoot, '_config.yml');
-    this.settingsBackupsDir = path.join(this.projectRoot, 'editor-backups', 'site-settings');
+    this.settingsBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'site-settings');
 
     this.aiSettingsPath = path.join(this.jekyllRoot, '_data', 'ai_settings.json');
 
     this.robotsFile = path.join(this.jekyllRoot, 'robots.txt');
-    this.seoBackupsDir = path.join(this.projectRoot, 'editor-backups', 'seo');
+    this.seoBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'seo');
 
     this.assetsDir = path.join(this.jekyllRoot, 'assets');
-    this.assetsBackupsDir = path.join(this.projectRoot, 'editor-backups', 'assets');
+    this.assetsBackupsDir = path.join(this.projectRoot, '.local-editor', 'backups', 'assets');
 
     this.ensureDirs();
   }
@@ -248,7 +248,7 @@ export class LocalDiskRepository implements ContentRepository {
 
     const backupFile = this.backupProductsYml(action, targetId);
     if (!backupFile) {
-      throw new Error('Pre-write backup failed: unable to write snapshot to editor-backups/products/');
+      throw new Error('Pre-write backup failed: unable to write snapshot to .local-editor/backups/products/');
     }
 
     const updatedProducts = updater(currentProducts);

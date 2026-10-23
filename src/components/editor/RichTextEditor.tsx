@@ -21,10 +21,17 @@ import {
   X,
   Clock,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  BookOpen,
+  Plus,
+  Search,
+  ExternalLink
 } from 'lucide-react';
 import { AssetPickerModal } from '../assets/AssetPickerModal';
 import { AssetPickerResult } from '../../types/assets';
+import { ArticleSource } from '../../types/articles';
+import { CitationNode } from './extensions/CitationNode';
+import { getSourceId } from '../../utils/citations';
 
 // Custom TipTap Link extension supporting standard HTML title attribute
 const CustomLink = Link.extend({
@@ -54,6 +61,8 @@ interface RichTextEditorProps {
   placeholder?: string;
   minHeight?: string;
   className?: string;
+  sources?: ArticleSource[];
+  onNavigateToSources?: () => void;
 }
 
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
@@ -62,10 +71,14 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   onChange,
   placeholder = 'Begin writing your essay or guide narrative here...',
   minHeight = '320px',
-  className = ''
+  className = '',
+  sources = [],
+  onNavigateToSources
 }) => {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showAssetPicker, setShowAssetPicker] = useState(false);
+  const [showCitationModal, setShowCitationModal] = useState(false);
+  const [citationSearch, setCitationSearch] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [linkTitle, setLinkTitle] = useState('');
 
@@ -79,6 +92,20 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       emDelimiter: '*',
       strongDelimiter: '**',
       br: '  '
+    });
+
+    // Custom Turndown rule for inline citations: <span data-citation="id"> -> [[@cite:id]]
+    td.addRule('citation', {
+      filter: (node) => {
+        return (
+          node.nodeName.toLowerCase() === 'span' &&
+          (node as HTMLElement).hasAttribute('data-citation')
+        );
+      },
+      replacement: (_content, node) => {
+        const id = (node as HTMLElement).getAttribute('data-citation');
+        return id ? `[[@cite:${id}]]` : '';
+      }
     });
 
     // Custom Turndown rule for markdown images with optional captions
@@ -107,15 +134,30 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     return td;
   }, []);
 
+  // Preprocesses raw markdown containing [[@cite:id]] into HTML spans for TipTap
+  const preprocessMarkdownForEditor = (md: string) => {
+    if (!md) return '';
+    const spanified = md.replace(
+      /\[\[@cite:([a-zA-Z0-9_\-\.:]+)\]\]/g,
+      '<span data-citation="$1" class="inline-citation-marker">[@cite:$1]</span>'
+    );
+    try {
+      return marked.parse(spanified, { gfm: true, breaks: true }) as string;
+    } catch {
+      return `<p>${spanified}</p>`;
+    }
+  };
+
   // Compute initial content HTML using GFM and breaks
   const computedInitialHtml = useMemo(() => {
-    if (initialHtml) return initialHtml;
+    if (initialHtml) {
+      return initialHtml.replace(
+        /\[\[@cite:([a-zA-Z0-9_\-\.:]+)\]\]/g,
+        '<span data-citation="$1" class="inline-citation-marker">[@cite:$1]</span>'
+      );
+    }
     if (initialMarkdown) {
-      try {
-        return marked.parse(initialMarkdown, { gfm: true, breaks: true }) as string;
-      } catch {
-        return `<p>${initialMarkdown}</p>`;
-      }
+      return preprocessMarkdownForEditor(initialMarkdown);
     }
     return '';
   }, [initialHtml, initialMarkdown]);
@@ -140,7 +182,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         HTMLAttributes: {
           class: 'my-6 rounded-xs border border-[#99BFF9]/30 shadow-xs max-w-full h-auto mx-auto block'
         }
-      })
+      }),
+      CitationNode
     ],
     content: computedInitialHtml,
     editorProps: {
@@ -163,12 +206,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     if (editor && initialMarkdown) {
       const currentMarkdown = turndown.turndown(editor.getHTML());
       if (currentMarkdown.trim() !== initialMarkdown.trim()) {
-        try {
-          const parsed = marked.parse(initialMarkdown, { gfm: true, breaks: true }) as string;
-          editor.commands.setContent(parsed, { emitUpdate: false });
-        } catch {
-          editor.commands.setContent(`<p>${initialMarkdown}</p>`, { emitUpdate: false });
-        }
+        const parsed = preprocessMarkdownForEditor(initialMarkdown);
+        editor.commands.setContent(parsed, { emitUpdate: false });
       }
     }
   }, [initialMarkdown, editor, turndown]);
@@ -184,6 +223,41 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
     editor.chain().focus().setImage(attrs).run();
   };
+
+  const filteredSources = useMemo(() => {
+    const list = (sources || []).map((s, idx) => ({
+      source: s,
+      id: getSourceId(s, idx),
+      index: idx
+    }));
+    if (!citationSearch.trim()) return list;
+    const q = citationSearch.toLowerCase().trim();
+    return list.filter(item =>
+      item.id.toLowerCase().includes(q) ||
+      (item.source.title || '').toLowerCase().includes(q) ||
+      (item.source.author || '').toLowerCase().includes(q) ||
+      (item.source.publication || '').toLowerCase().includes(q) ||
+      String(item.source.year || '').includes(q)
+    );
+  }, [sources, citationSearch]);
+
+  const handleInsertCitation = (sourceId: string) => {
+    if (!editor) return;
+    const { selection } = editor.state;
+    // If text is highlighted, place citation after selection without deleting surrounding text
+    if (!selection.empty) {
+      editor.chain().focus().setTextSelection(selection.to).insertContent({
+        type: 'citation',
+        attrs: { sourceId }
+      }).run();
+    } else {
+      editor.chain().focus().insertContent({
+        type: 'citation',
+        attrs: { sourceId }
+      }).run();
+    }
+  };
+
 
   // Calculate live statistics
   const textContent = editor?.getText() || '';
@@ -346,6 +420,26 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               </button>
             </div>
 
+            {/* Citation Insertion */}
+            <div className="flex items-center border-r border-[#99BFF9]/20 pr-1.5 mr-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCitationModal(prev => !prev);
+                  setShowLinkModal(false);
+                }}
+                className={`px-2 py-1.5 rounded transition-colors cursor-pointer flex items-center gap-1.5 ${
+                  showCitationModal
+                    ? 'bg-[#2A548E] text-white'
+                    : 'text-[#2A548E] bg-[#EEF5FF] hover:bg-[#2A548E] hover:text-white'
+                }`}
+                title="Insert Scholarly Citation [[@cite:id]]"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span className="text-[11px] font-semibold">Cite</span>
+              </button>
+            </div>
+
             {/* Lists & Blockquote */}
             <div className="flex items-center border-r border-[#99BFF9]/20 pr-1.5 mr-1.5">
               <button
@@ -479,6 +573,116 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Inline Citation Selection Popover */}
+        {showCitationModal && (
+          <div className="p-3 bg-[#EEF5FF] border-t border-[#99BFF9]/30 text-xs space-y-2">
+            <div className="flex items-center justify-between pb-2 border-b border-[#99BFF9]/20">
+              <div className="flex items-center gap-1.5 text-[#2A548E] font-semibold">
+                <BookOpen className="w-4 h-4" />
+                <span>Insert Research Citation</span>
+                <span className="text-[11px] font-mono text-[#5A6270]">[[@cite:source-id]]</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCitationModal(false)}
+                className="p-1 text-stone-500 hover:text-stone-800 transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {(!sources || sources.length === 0) ? (
+              <div className="p-4 bg-white border border-[#99BFF9]/30 rounded-xs text-center space-y-2">
+                <p className="text-[#5A6270] text-xs">
+                  No scholarly sources have been added to this article yet.
+                </p>
+                {onNavigateToSources && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCitationModal(false);
+                      onNavigateToSources();
+                    }}
+                    className="px-3 py-1.5 bg-[#2A548E] text-white text-xs font-semibold rounded-xs hover:bg-[#1E3E6B] transition-colors cursor-pointer inline-flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Open Citations Tab to Add Source</span>
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Search className="w-3.5 h-3.5 text-[#5A6270] absolute left-2.5 top-2" />
+                    <input
+                      type="text"
+                      value={citationSearch}
+                      onChange={(e) => setCitationSearch(e.target.value)}
+                      placeholder="Filter sources by author, title, year, or citation key..."
+                      className="w-full pl-8 pr-3 py-1.5 bg-white border border-[#99BFF9]/40 text-xs text-[#1E232B] focus:outline-none focus:border-[#2A548E]"
+                    />
+                  </div>
+                  {onNavigateToSources && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowCitationModal(false);
+                        onNavigateToSources();
+                      }}
+                      className="px-2.5 py-1.5 bg-white text-[#2A548E] border border-[#99BFF9]/40 hover:bg-[#EEF5FF] text-[11px] font-medium shrink-0 transition-colors cursor-pointer"
+                      title="Manage Sources in Article"
+                    >
+                      Manage Citations
+                    </button>
+                  )}
+                </div>
+
+                <div className="max-h-48 overflow-y-auto space-y-1 bg-white border border-[#99BFF9]/30 rounded-xs p-1.5">
+                  {filteredSources.length === 0 ? (
+                    <div className="p-3 text-center text-[#5A6270] text-xs">
+                      No matching sources found for "{citationSearch}".
+                    </div>
+                  ) : (
+                    filteredSources.map(({ source, id }) => (
+                      <div
+                        key={id}
+                        className="p-2 hover:bg-[#EEF5FF]/70 border border-transparent hover:border-[#99BFF9]/30 rounded-xs flex items-center justify-between gap-3 text-xs transition-colors group cursor-pointer"
+                        onClick={() => handleInsertCitation(id)}
+                      >
+                        <div className="space-y-0.5 overflow-hidden">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-[11px] font-semibold text-[#2A548E] bg-[#EEF5FF] border border-[#99BFF9]/30 px-1.5 py-0.2 rounded shrink-0">
+                              [[@cite:{id}]]
+                            </span>
+                            <span className="font-serif font-medium text-[#1E232B] truncate text-xs">
+                              {source.title || 'Untitled Source'}
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-[#5A6270] truncate pl-1">
+                            {source.author}{source.year ? ` (${source.year})` : ''}{source.publication ? ` • ${source.publication}` : ''}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleInsertCitation(id);
+                          }}
+                          className="px-2.5 py-1 bg-[#2A548E] text-white text-[11px] font-semibold rounded-xs hover:bg-[#1E3E6B] transition-colors shrink-0 cursor-pointer"
+                        >
+                          Insert
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

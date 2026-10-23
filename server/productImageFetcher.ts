@@ -562,7 +562,7 @@ export async function fetchAndImportProductImage(
   const projectRoot = options.projectRoot;
   const assetsImagesDir = path.join(jekyllRoot, 'assets', 'images');
   const assetsRootDir = path.join(jekyllRoot, 'assets');
-  const assetsBackupsDir = path.join(projectRoot, 'editor-backups', 'assets');
+  const assetsBackupsDir = path.join(projectRoot, '.local-editor', 'backups', 'assets');
 
   // Ensure directories exist
   [assetsImagesDir, assetsRootDir, assetsBackupsDir].forEach(dir => {

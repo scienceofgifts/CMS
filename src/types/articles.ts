@@ -12,12 +12,14 @@ export interface ArticleIntroQuote {
 }
 
 export interface ArticleSource {
+  id?: string;
   title: string;
   author: string;
   publication?: string;
   year?: string | number;
   url?: string;
   annotation?: string;
+  [key: string]: any;
 }
 
 export interface ArticleFrontMatter {

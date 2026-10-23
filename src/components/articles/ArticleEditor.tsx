@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Save,
   Eye,
@@ -20,7 +20,9 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-  Globe
+  Globe,
+  Copy,
+  Check
 } from 'lucide-react';
 import { ArticleFrontMatter, ArticleSource } from '../../types/articles';
 import { RichTextEditor } from '../editor/RichTextEditor';
@@ -30,6 +32,12 @@ import { ArticleBackupsModal } from './ArticleBackupsModal';
 import { ArticleAiModal } from './ArticleAiModal';
 import { useModalEscape } from '../../hooks/useModalEscape';
 import { getTodayIsoDate, normalizeToIsoDate } from '../../utils/date';
+import {
+  getSourceId,
+  normalizeCitationId,
+  countCitationsBySource,
+  replaceCitationIdInMarkdown
+} from '../../utils/citations';
 import { marked } from 'marked';
 
 interface ArticleEditorProps {
@@ -66,6 +74,15 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   const [showAssetPicker, setShowAssetPicker] = useState<boolean>(false);
   const [showBackupsModal, setShowBackupsModal] = useState<boolean>(false);
   const [showAiModal, setShowAiModal] = useState<boolean>(false);
+
+  // Citations State
+  const [pendingDeleteSource, setPendingDeleteSource] = useState<{
+    index: number;
+    id: string;
+    title: string;
+    count: number;
+  } | null>(null);
+  const [copiedCitationKey, setCopiedCitationKey] = useState<string | null>(null);
 
   // Data lists
   const [availableAuthors, setAvailableAuthors] = useState<Record<string, any>>({});
@@ -245,6 +262,11 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
     }
   };
 
+  // Sources & Citation counts
+  const citationCounts = useMemo(() => {
+    return countCitationsBySource(bodyMarkdown, frontMatter.sources || []);
+  }, [bodyMarkdown, frontMatter.sources]);
+
   // Sources manipulation
   const handleAddSource = () => {
     setIsDirty(true);
@@ -252,7 +274,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       ...prev,
       sources: [
         ...(prev.sources || []),
-        { title: '', author: '', publication: '', year: '', url: '', annotation: '' }
+        { id: '', title: '', author: '', publication: '', year: '', url: '', annotation: '' }
       ]
     }));
   };
@@ -266,12 +288,61 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
     });
   };
 
-  const handleRemoveSource = (index: number) => {
+  const handleUpdateSourceId = (index: number, rawNewId: string) => {
+    setIsDirty(true);
+    const currentSource = frontMatter.sources?.[index];
+    const oldId = currentSource ? getSourceId(currentSource, index) : '';
+    const newId = normalizeCitationId(rawNewId);
+
+    setFrontMatter(prev => {
+      const updatedSources = [...(prev.sources || [])];
+      updatedSources[index] = { ...updatedSources[index], id: rawNewId };
+      return { ...prev, sources: updatedSources };
+    });
+
+    // If the citation was cited in bodyMarkdown and changed, update inline citations
+    if (oldId && newId && oldId !== newId) {
+      const occurrenceCount = (bodyMarkdown.match(new RegExp(`\\[\\[@cite:${oldId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]\\]`, 'g')) || []).length;
+      if (occurrenceCount > 0) {
+        const updatedMarkdown = replaceCitationIdInMarkdown(bodyMarkdown, oldId, newId);
+        handleBodyChange(updatedMarkdown);
+        setSuccessMessage(`Updated ${occurrenceCount} inline citation(s) from "${oldId}" to "${newId}".`);
+        setTimeout(() => setSuccessMessage(null), 4000);
+      }
+    }
+  };
+
+  const handleRequestRemoveSource = (index: number) => {
+    const source = frontMatter.sources?.[index];
+    if (!source) return;
+    const id = getSourceId(source, index);
+    const count = citationCounts[id] || 0;
+    if (count > 0) {
+      setPendingDeleteSource({
+        index,
+        id,
+        title: source.title || 'Untitled Source',
+        count
+      });
+    } else {
+      handleConfirmRemoveSource(index);
+    }
+  };
+
+  const handleConfirmRemoveSource = (index: number) => {
     setIsDirty(true);
     setFrontMatter(prev => ({
       ...prev,
       sources: (prev.sources || []).filter((_, i) => i !== index)
     }));
+    setPendingDeleteSource(null);
+  };
+
+  const handleCopyCitationKey = (key: string) => {
+    const code = `[[@cite:${key}]]`;
+    navigator.clipboard?.writeText(code);
+    setCopiedCitationKey(key);
+    setTimeout(() => setCopiedCitationKey(null), 2000);
   };
 
   // Related articles toggle
@@ -643,6 +714,8 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                     initialMarkdown={bodyMarkdown}
                     onChange={(markdown, html) => handleBodyChange(markdown, html)}
                     placeholder="Write your article essay here. Use formatting, headings, links, blockquotes, and images..."
+                    sources={frontMatter.sources || []}
+                    onNavigateToSources={() => setActiveTab('sources')}
                   />
                 </div>
               </div>
@@ -1118,86 +1191,141 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {frontMatter.sources.map((source, idx) => (
-                      <div key={idx} className="p-4 bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-xs space-y-3 relative group">
-                        <div className="flex items-center justify-between border-b border-[#99BFF9]/20 pb-2">
-                          <span className="text-xs font-semibold text-[#2A548E] font-serif">
-                            Citation #{idx + 1}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveSource(idx)}
-                            className="text-rose-600 hover:text-rose-800 text-xs flex items-center gap-1 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>Remove</span>
-                          </button>
-                        </div>
+                    {frontMatter.sources.map((source, idx) => {
+                      const currentId = getSourceId(source, idx);
+                      const autoDerivedId = !source.id ? currentId : '';
+                      const citedCount = citationCounts[currentId] || 0;
+                      const isCopied = copiedCitationKey === currentId;
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div className="sm:col-span-2">
-                            <label className="block text-[11px] text-[#5A6270] mb-0.5">Paper / Book Title *</label>
-                            <input
-                              type="text"
-                              value={source.title || ''}
-                              onChange={(e) => handleUpdateSource(idx, 'title', e.target.value)}
-                              placeholder="e.g. The Giver-Recipient Asymmetry..."
-                              className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
-                            />
+                      return (
+                        <div key={idx} className="p-4 bg-[#FAF9F6] border border-[#99BFF9]/30 rounded-xs space-y-3 relative group">
+                          <div className="flex flex-wrap items-center justify-between border-b border-[#99BFF9]/20 pb-2 gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-semibold text-[#2A548E] font-serif">
+                                Citation #{idx + 1}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleCopyCitationKey(currentId)}
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-white border border-[#99BFF9]/40 hover:border-[#2A548E] text-[10px] font-mono font-semibold text-[#2A548E] rounded transition-colors cursor-pointer"
+                                title="Copy citation syntax to clipboard"
+                              >
+                                {isCopied ? (
+                                  <>
+                                    <Check className="w-3 h-3 text-emerald-600" />
+                                    <span className="text-emerald-700">Copied!</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="w-3 h-3 text-[#5A6270]" />
+                                    <span>[[@cite:{currentId}]]</span>
+                                  </>
+                                )}
+                              </button>
+                              {citedCount > 0 ? (
+                                <span className="px-2 py-0.5 bg-[#EEF5FF] text-[#2A548E] text-[10px] font-semibold rounded border border-[#99BFF9]/30">
+                                  Cited {citedCount}× in essay
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 bg-stone-100 text-[#5A6270] text-[10px] rounded">
+                                  Not cited inline
+                                </span>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRequestRemoveSource(idx)}
+                              className="text-rose-600 hover:text-rose-800 text-xs flex items-center gap-1 cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>Remove</span>
+                            </button>
                           </div>
-                          <div>
-                            <label className="block text-[11px] text-[#5A6270] mb-0.5">Author(s)</label>
-                            <input
-                              type="text"
-                              value={source.author || ''}
-                              onChange={(e) => handleUpdateSource(idx, 'author', e.target.value)}
-                              placeholder="e.g. Jeff Galak, Julian Givi, and Elanor F. Williams"
-                              className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[11px] text-[#5A6270] mb-0.5">Journal / Publication</label>
-                            <input
-                              type="text"
-                              value={source.publication || ''}
-                              onChange={(e) => handleUpdateSource(idx, 'publication', e.target.value)}
-                              placeholder="e.g. Current Directions in Psychological Science"
-                              className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[11px] text-[#5A6270] mb-0.5">Year</label>
-                            <input
-                              type="text"
-                              value={source.year || ''}
-                              onChange={(e) => handleUpdateSource(idx, 'year', e.target.value)}
-                              placeholder="e.g. 2016"
-                              className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[11px] text-[#5A6270] mb-0.5">DOI / URL</label>
-                            <input
-                              type="text"
-                              value={source.url || ''}
-                              onChange={(e) => handleUpdateSource(idx, 'url', e.target.value)}
-                              placeholder="https://journals.sagepub.com/doi/..."
-                              className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
-                            />
-                          </div>
-                          <div className="sm:col-span-2">
-                            <label className="block text-[11px] text-[#5A6270] mb-0.5">Annotation Note</label>
-                            <input
-                              type="text"
-                              value={source.annotation || ''}
-                              onChange={(e) => handleUpdateSource(idx, 'annotation', e.target.value)}
-                              placeholder="Foundational paper establishing the temporal disconnect..."
-                              className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
-                            />
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="sm:col-span-2">
+                              <label className="block text-[11px] text-[#5A6270] mb-0.5 flex items-center justify-between">
+                                <span className="font-semibold text-[#2A548E]">Citation Key / Identifier (`id`)</span>
+                                <span className="text-[10px] text-stone-400 font-mono">Syntax: [[@cite:{currentId}]]</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={source.id || ''}
+                                onChange={(e) => handleUpdateSourceId(idx, e.target.value)}
+                                placeholder={autoDerivedId || 'e.g. galak-2016'}
+                                className="w-full p-2 text-xs font-mono bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
+                              />
+                              {!source.id && (
+                                <p className="text-[10px] text-stone-400 mt-0.5">
+                                  Auto-derived fallback: <code className="font-mono text-[#2A548E]">{autoDerivedId}</code>. Enter a custom key above to override.
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="sm:col-span-2">
+                              <label className="block text-[11px] text-[#5A6270] mb-0.5">Paper / Book Title *</label>
+                              <input
+                                type="text"
+                                value={source.title || ''}
+                                onChange={(e) => handleUpdateSource(idx, 'title', e.target.value)}
+                                placeholder="e.g. The Giver-Recipient Asymmetry..."
+                                className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] text-[#5A6270] mb-0.5">Author(s)</label>
+                              <input
+                                type="text"
+                                value={source.author || ''}
+                                onChange={(e) => handleUpdateSource(idx, 'author', e.target.value)}
+                                placeholder="e.g. Jeff Galak, Julian Givi, and Elanor F. Williams"
+                                className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] text-[#5A6270] mb-0.5">Journal / Publication</label>
+                              <input
+                                type="text"
+                                value={source.publication || ''}
+                                onChange={(e) => handleUpdateSource(idx, 'publication', e.target.value)}
+                                placeholder="e.g. Current Directions in Psychological Science"
+                                className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] text-[#5A6270] mb-0.5">Year</label>
+                              <input
+                                type="text"
+                                value={source.year || ''}
+                                onChange={(e) => handleUpdateSource(idx, 'year', e.target.value)}
+                                placeholder="e.g. 2016"
+                                className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] text-[#5A6270] mb-0.5">DOI / URL</label>
+                              <input
+                                type="text"
+                                value={source.url || ''}
+                                onChange={(e) => handleUpdateSource(idx, 'url', e.target.value)}
+                                placeholder="https://journals.sagepub.com/doi/..."
+                                className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
+                              />
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="block text-[11px] text-[#5A6270] mb-0.5">Annotation Note</label>
+                              <input
+                                type="text"
+                                value={source.annotation || ''}
+                                onChange={(e) => handleUpdateSource(idx, 'annotation', e.target.value)}
+                                placeholder="Foundational paper establishing the temporal disconnect..."
+                                className="w-full p-2 text-xs bg-white border border-[#99BFF9]/30 focus:outline-none focus:border-[#2A548E]"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -1283,6 +1411,48 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
           setBodyMarkdown(prev => `${(prev || '').trim()}\n\n${appendedText.trim()}\n`);
         }}
       />
+
+      {/* Delete Cited Source Confirmation Modal */}
+      {pendingDeleteSource && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-2xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-xs border border-rose-300 shadow-xl max-w-md w-full p-5 space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-rose-50 text-rose-600 rounded-full shrink-0 mt-0.5">
+                <AlertCircle className="w-5 h-5" />
+              </div>
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <h4 className="text-sm font-semibold text-[#1E232B]">
+                  Delete Cited Scholarly Source?
+                </h4>
+                <p className="text-xs text-[#5A6270] leading-relaxed">
+                  The source <strong>"{pendingDeleteSource.title}"</strong> (citation key: <code className="font-mono text-rose-700 bg-rose-50 px-1 py-0.5 rounded text-[11px]">[[@cite:{pendingDeleteSource.id}]]</code>) is currently cited <strong>{pendingDeleteSource.count} time(s)</strong> in your article essay.
+                </p>
+                <div className="p-2.5 bg-rose-50 border border-rose-200 rounded text-[11px] text-rose-800 leading-normal">
+                  ⚠️ Deleting this source will cause its inline citations in the article to become unresolved (<code className="font-mono font-bold text-rose-900">[?]</code>).
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-stone-100">
+              <button
+                type="button"
+                onClick={() => setPendingDeleteSource(null)}
+                className="px-3 py-1.5 text-xs text-[#5A6270] hover:text-[#1E232B] font-medium transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleConfirmRemoveSource(pendingDeleteSource.index)}
+                className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xs transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete Source Anyway</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
